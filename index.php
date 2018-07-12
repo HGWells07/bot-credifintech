@@ -3,10 +3,10 @@
 require __DIR__ . '/vendor/autoload.php';
 
 //Importando archivos necesarios
-require_once __DIR__."./src/Constantes.php";
-require_once __DIR__."./src/conversations/instituciones/TipoInstitucionConversation.php";
-require_once __DIR__."./src/conversations/MenuConversation.php";
-require_once __DIR__."./src/conversations/SalidaConversation.php";
+require_once __DIR__."/src/Constantes.php";
+require_once __DIR__."/src/conversations/instituciones/TipoInstitucionConversation.php";
+require_once __DIR__."/src/conversations/MenuConversation.php";
+require_once __DIR__."/src/conversations/SalidaConversation.php";
 
 //Configurando namespace de clases de botman (Plantillas de facebook)
 use BotMan\BotMan\BotMan;
