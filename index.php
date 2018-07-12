@@ -117,6 +117,6 @@ $botman->hears('Instituciones de gobierno', function(BotMan $bot){
 });
 */
 $botman->listen();
-echo "This is botman running";
+//echo "This is botman running";
 
 ?>
