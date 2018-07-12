@@ -5,8 +5,8 @@ namespace BotCredifintech\Conversations;
 require __DIR__ . './../../vendor/autoload.php';
 
 require_once __DIR__ . "./../Constantes.php";
-require_once __DIR__ . "./instituciones/salud/SaludConversation.php";
-require_once __DIR__."./SalidaConversation.php";
+require_once __DIR__ . "/instituciones/salud/SaludConversation.php";
+require_once __DIR__."/SalidaConversation.php";
 
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\BotManFactory;
