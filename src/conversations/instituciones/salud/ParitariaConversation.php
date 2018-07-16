@@ -24,7 +24,7 @@ use BotCredifintech\Conversations\Instituciones\Salud\ConstantesSalud;
 
 class ParitariaConversation extends Conversation
 {
-  protected $nombre, $telefono, $matricula;
+  protected $nombre, $telefono, $matricula, $email, $monto;
   protected $imagenINE, $imagenInformePago;
 
 
@@ -53,6 +53,20 @@ class ParitariaConversation extends Conversation
   public function askTelefono(){
     $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response){
       $this->telefono = $response->getText();
+      $this-> askEmail();
+    });
+  }
+
+  public function askEmail(){
+    $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response){
+      $this->email = $response->getText();
+      $this-> askMonto();
+    });
+  }
+
+  public function askMonto(){
+    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response){
+      $this->monto = $response->getText();
       $this-> askMatricula();
     });
   }
@@ -60,7 +74,7 @@ class ParitariaConversation extends Conversation
   public function askMatricula(){
     $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response){
       $this->matricula = $response->getText();
-      $this-> askINE();
+      $this-> askIne();
     });
   }
 

@@ -25,6 +25,8 @@ class Constantes {
   const PEDIR_INE = "Por favor tome una foto de su INE";
   const PEDIR_TALON_NOMINA = "Por favor tome una foto de sutalón de nómina";
   const PEDIR_INFORME_PAGO = "Por favor tome una foto de su Informe de pago";
+  const PEDIR_EMAIL = "Por favor ingrese su correo electrónico";
+  const PEDIR_MONTO = "¿Cuánto dinero necesita?";
 
   // Este mensaje se muestra cuando el usuario no coincide con el perfil de prospecto.
   const MENSAJE_NO = "Lo sentimos, aún no contamos con convenios para tu área, le agradecemos su interés y sugerimos que nos siga en nuestras redes para futuras actualizaciones.";

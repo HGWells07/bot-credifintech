@@ -74,7 +74,7 @@ class MenuConversation extends Conversation
         ->fallback('Si no pertenece a alguna de las anteriores áreas no se podrá proceder con la solicitud, lo sentimos, estamos en contacto')
         ->callbackId('ask_area_gobierno')
         ->addButtons([
-            Button::create('Salud')->value('Area/Salud'),
+            Button::create('IMSS')->value('Area/Salud'),
             Button::create('Educación')->value('Area/Educación'),
             Button::create('Gobierno')->value('Area/Gobierno'),
             Button::create('Otra o Privada')->value('Area/Ninguna'),

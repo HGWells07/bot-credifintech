@@ -53,6 +53,20 @@ class ConfianzaConversation extends Conversation
   public function askTelefono(){
     $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response){
       $this->telefono = $response->getText();
+      $this-> askEmail();
+    });
+  }
+
+  public function askEmail(){
+    $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response){
+      $this->email = $response->getText();
+      $this-> askMonto();
+    });
+  }
+
+  public function askMonto(){
+    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response){
+      $this->monto = $response->getText();
       $this-> askMatricula();
     });
   }
