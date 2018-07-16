@@ -22,7 +22,7 @@ use BotCredifintech\Constantes;
 class SalidaConversation extends Conversation
 {
 
-  var $nombre, $telefono;
+  var $nombre, $telefono, $email;
 
   public function askDatosSalida(){
     $this -> say(Constantes::MENSAJE_NO);
@@ -39,7 +39,14 @@ class SalidaConversation extends Conversation
 
   public function askTelefono(){
     $this -> ask("Escriba su telefono por favor", function(Answer $answer){
-      $this -> $nombre = $answer -> getValue();
+      $this -> $telefono = $answer -> getValue();
+      $this -> askEmail();
+    });
+  }
+
+  public function askEmail(){
+    $this -> ask("Escriba su correo electrónico", function(Answer $answer){
+      $this -> $email = $answer -> getValue();
       $this -> say("Gracias por su tiempo, nos contactaremos con usted en cuanto tengamos servicios disponibles para su caso");
     });
   }

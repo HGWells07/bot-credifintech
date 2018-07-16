@@ -24,7 +24,7 @@ use BotCredifintech\Conversations\Instituciones\Salud\ConstantesSalud;
 
 class ConfianzaConversation extends Conversation
 {
-  protected $nombre, $telefono, $matricula;
+  protected $nombre, $telefono, $matricula, $numDelegacion;
   protected $imagenINE, $imagenInformePago;
 
 
@@ -74,6 +74,13 @@ class ConfianzaConversation extends Conversation
   public function askMatricula(){
     $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response){
       $this->matricula = $response->getText();
+      $this-> askNumDelegacion();
+    });
+  }
+
+  public function askNumDelegacion(){
+    $this -> ask(Constantes::PEDIR_NUM_DELEGACION_ADSCRIPCION, function(Answer $response){
+      $this->numDelegacion = $response->getText();
       $this-> askINE();
     });
   }
