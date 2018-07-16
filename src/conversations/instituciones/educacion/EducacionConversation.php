@@ -5,7 +5,7 @@ namespace BotCredifintech\Conversations\Instituciones\Educacion;
 require __DIR__ . './../../../../vendor/autoload.php';
 
 require_once __DIR__ . "./../../../Constantes.php";
-require_once __DIR__ . "./ConstantesEducacion.php";
+require_once __DIR__ . "/ConstantesEducacion.php";
 require_once __DIR__ . "./../../SalidaConversation.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
