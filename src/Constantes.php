@@ -16,6 +16,16 @@ class Constantes {
     ]   
   ];
 
+  //Mensajes para conversaciones
+
+  const PEDIR_NOMBRE = "Escriba su nombre completo";
+  const PEDIR_TELEFONO = "Escriba su número de teléfono";
+  const PEDIR_NSS = "Escriba su NSS";
+  const PEDIR_MATRICULA = "Escriba su número de matrícula";
+  const PEDIR_INE = "Por favor tome una foto de su INE";
+  const PEDIR_TALON_NOMINA = "Por favor tome una foto de sutalón de nómina";
+  const PEDIR_INFORME_PAGO = "Por favor tome una foto de su Informe de pago";
+
   // Este mensaje se muestra cuando el usuario no coincide con el perfil de prospecto.
   const MENSAJE_NO = "Lo sentimos, aún no contamos con convenios para tu área, le agradecemos su interés y sugerimos que nos siga en nuestras redes para futuras actualizaciones.";
 

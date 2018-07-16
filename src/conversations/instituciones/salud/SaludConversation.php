@@ -7,6 +7,9 @@ require __DIR__ . './../../../../vendor/autoload.php';
 require_once __DIR__ . "./../../../Constantes.php";
 require_once __DIR__ . "./../../SalidaConversation.php";
 require_once __DIR__ . "/PensionadosConversation.php";
+require_once __DIR__ . "/ConfianzaConversation.php";
+require_once __DIR__ . "/JubiladosConversation.php";
+require_once __DIR__ . "/ParitariaConversation.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -20,6 +23,9 @@ use Mpociot\BotMan\Cache\DoctrineCache;
 use BotCredifintech\Constantes;
 use BotCredifintech\Conversations\SalidaConversation;
 use BotCredifintech\Conversations\Instituciones\Salud\PensionadosConversation;
+use BotCredifintech\Conversations\Instituciones\Salud\ConfianzaConversation;
+use BotCredifintech\Conversations\Instituciones\Salud\JubiladosConversation;
+use BotCredifintech\Conversations\Instituciones\Salud\ParitariaConversation;
 
 class SaludConversation extends Conversation
 {
@@ -28,6 +34,9 @@ class SaludConversation extends Conversation
   const CONFIANZA = "Confianza";
   const JUBILADOS = "Jubilados";
   const PARITARIA = "Paritaria";
+  
+  var $requerimientos = "";
+
 
   protected $errores = 0;
 
@@ -47,16 +56,16 @@ class SaludConversation extends Conversation
       if ($answer->isInteractiveMessageReply()) {
         $selectedValue = $answer->getValue();
         if($selectedValue==self::PENSIONADOS){
-          $this->bot->startConversation(new PensionadosConversation());
+          $this->askRequerimientos(self::PENSIONADOS, ConstantesSalud::DATOS_PENSIONADO);
         }
         if($selectedValue==self::CONFIANZA){
-          $this->say('Confianza');
+          $this->askRequerimientos(self::CONFIANZA, ConstantesSalud::DATOS_CONFIANZA);
         }
         if($selectedValue==self::JUBILADOS){
-          $this->say('Jubilados');
+          $this->askRequerimientos(self::JUBILADOS, ConstantesSalud::DATOS_JUBILADOS);
         }
         if($selectedValue==self::PARITARIA){
-          $this->say('Paritaria');
+          $this->askRequerimientos(self::PARITARIA, ConstantesSalud::DATOS_PARITARIA);
         }
       } else {
         $this->errores += 1;
@@ -69,6 +78,47 @@ class SaludConversation extends Conversation
         
     }
     });
+  }
+
+  public function askRequerimientos($tipo, $req){
+
+    $conversations = [];
+
+    $question = Question::create(Constantes::PREGUNTA_DOCUMENTACION)
+        ->fallback('En orden de realizar esta solicitud son necesarios estos documentos y datos, sin ellos no podrá continuar')
+        ->callbackId('ask_documentos_e_informacion')
+        ->addButtons([
+            Button::create("Listo, empecemos")->value("Listo, empecemos"),
+        ]);
+    
+      $this->say(Constantes::MENSAJE_DATOS_REQUERIDOS);
+      $this->say($req);
+      $this->ask($question, function (Answer $answer) use ($tipo){
+      $this->tipoInstitucion = $answer->getValue();
+      if ($answer->isInteractiveMessageReply()) {
+        $selectedValue = $answer->getValue(); // Tipo/Gobierno / Tipo/Privado / Tipo/Pensionado
+        if($selectedValue=="Listo, empecemos"){
+
+          $conversations = [
+            self::PENSIONADOS => new PensionadosConversation(),
+            self::CONFIANZA => new ConfianzaConversation(),
+            self::JUBILADOS => new JubiladosConversation(),
+            self::PARITARIA => new ParitariaConversation(),
+          ];
+
+          $this->bot->StartConversation($conversations[$tipo]);
+        }
+      } else {
+        $this->errores += 1;
+        if($this->errores >= 3){
+          $this->llamarAsesor();
+        } else {
+          $this->say(Constantes::MENSAJE_NAVEGACION_BOTONES);
+          $this->askRequerimientos();
+        }
+      }
+    });
+  
   }
 
   public function llamarAsesor(){

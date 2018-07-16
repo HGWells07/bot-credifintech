@@ -22,9 +22,9 @@ use BotCredifintech\Conversations\SalidaConversation;
 use BotCredifintech\Conversations\Insituciones\SaludConversation;
 use BotCredifintech\Conversations\Instituciones\Salud\ConstantesSalud;
 
-class PensionadosConversation extends Conversation
+class ParitariaConversation extends Conversation
 {
-  protected $nombre, $telefono, $nss;
+  protected $nombre, $telefono, $matricula;
   protected $imagenINE, $imagenInformePago;
 
 
@@ -53,13 +53,13 @@ class PensionadosConversation extends Conversation
   public function askTelefono(){
     $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response){
       $this->telefono = $response->getText();
-      $this-> askNSS();
+      $this-> askMatricula();
     });
   }
 
-  public function askNSS(){
-    $this -> ask(Constantes::PEDIR_NSS, function(Answer $response){
-      $this->nss = $response->getText();
+  public function askMatricula(){
+    $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response){
+      $this->matricula = $response->getText();
       $this-> askINE();
     });
   }

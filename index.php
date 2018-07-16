@@ -8,6 +8,10 @@ require_once __DIR__."/src/conversations/instituciones/TipoInstitucionConversati
 require_once __DIR__."/src/conversations/MenuConversation.php";
 require_once __DIR__."/src/conversations/SalidaConversation.php";
 
+//Extra Facebook Drivers
+require_once __DIR__."/vendor/botman/driver-facebook/src/FacebookImageDriver.php";
+require_once __DIR__."/vendor/botman/driver-facebook/src/FacebookFileDriver.php";
+
 //Configurando namespace de clases de botman (Plantillas de facebook)
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\BotManFactory;
@@ -18,7 +22,6 @@ use BotMan\Drivers\Facebook\Extensions\ButtonTemplate;
 use BotMan\Drivers\Facebook\Extensions\ElementButton;
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\Drivers\Facebook\Extensions\Element;
-use BotMan\Drivers\Facebook\Extensions\GenericTemplate;
 
 use BotMan\BotMan\Messages\Conversations\Conversation;
 
@@ -33,6 +36,8 @@ use BotCredifintech\Conversations\SalidaConversation;
 
 //Cargando Driver de chatbot para Facebook
 DriverManager::loadDriver(\BotMan\Drivers\Facebook\FacebookDriver::class);
+DriverManager::loadDriver(\Botman\Drivers\Facebook\FacebookImageDriver::class);
+DriverManager::loadDriver(\Botman\Drivers\Facebook\FacebookFileDriver::class);
 
 $config = [
   'facebook'=> [
@@ -74,48 +79,6 @@ $botman->hears('Salir', function(BotMan $bot){
 });
 */
 
-//Mensaje de AGRADECIMIENTO
-/*
-$botman->hears('No', function(BotMan $bot){
-  $nombre = $bot->getUser()->getFirstName();
-  $bot->reply("Es un gusto atenderte ".$nombre.".");
-  $bot->startConversation(new SalidaConversation());
-});
-
-$botman->hears('Si', function(BotMan $bot){
-  $bot->startConversation(new MenuConversation());
-});
-*/
-
-//Gobierno
-/*
-$botman->hears('Instituciones de gobierno', function(BotMan $bot){
-  $advertencia = "Revisa solo las que tenemos";
-  $bot->reply("Selecciona una de las opciones de abajo:");
-  $bot->reply(GenericTemplate::create()
-      ->addImageAspectRatio(GenericTemplate::RATIO_HORIZONTAL)
-      ->addElements([
-          Element::create('Instituciones de Salud')
-              ->subtitle($advertencia)
-              ->image('https://raw.githubusercontent.com/HGWells07/imagenes/master/credifintech-bot/imagenes-01.jpg')
-              ->addButton(ElementButton::create('Ver Instituciones')
-                  ->payload('Ver Instituciones de salud')->type('postback')),
-          
-          Element::create('Instituciones de Educación')
-              ->subtitle($advertencia)
-              ->image('https://raw.githubusercontent.com/HGWells07/imagenes/master/credifintech-bot/imagenes-02.jpg')
-              ->addButton(ElementButton::create('Ver Instituciones')
-                  ->payload('Ver Instituciones de educación')->type('postback')),
-          
-          Element::create('Instituciones del Gobierno')
-              ->subtitle($advertencia)
-              ->image('https://raw.githubusercontent.com/HGWells07/imagenes/master/credifintech-bot/imagenes-03.jpg')
-              ->addButton(ElementButton::create('Ver Instituciones')
-                  ->payload('Ver Instituciones del gobierno')->type('postback')),
-      ])
-  );
-});
-*/
 $botman->listen();
 //echo "This is botman running";
 

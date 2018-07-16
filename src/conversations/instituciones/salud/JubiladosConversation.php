@@ -22,7 +22,7 @@ use BotCredifintech\Conversations\SalidaConversation;
 use BotCredifintech\Conversations\Insituciones\SaludConversation;
 use BotCredifintech\Conversations\Instituciones\Salud\ConstantesSalud;
 
-class PensionadosConversation extends Conversation
+class JubiladosConversation extends Conversation
 {
   protected $nombre, $telefono, $nss;
   protected $imagenINE, $imagenInformePago;
