@@ -30,6 +30,13 @@ use BotCredifintech\Conversations\Instituciones\Salud\ParitariaConversation;
 class SaludConversation extends Conversation
 {
 
+  private $user;
+
+  public function __construct($prospecto)
+  {
+      $this->$user = $prospecto;
+  }
+
   const PENSIONADOS = "Pensionados";
   const CONFIANZA = "Confianza";
   const JUBILADOS = "Jubilados";
@@ -42,7 +49,7 @@ class SaludConversation extends Conversation
 
   public function askCategoria(){
 
-    $question = Question::create("¿En que categoría se encuentra usted?")
+    $question = Question::create("¿En que categoría se encuentra usted?".$this->$user." respuesta")
         ->fallback('Si no pertenece a alguna de las anteriores categorías no se podrá proceder con la solicitud, lo sentimos, estamos en contacto')
         ->callbackId('ask_area_gobierno')
         ->addButtons([
