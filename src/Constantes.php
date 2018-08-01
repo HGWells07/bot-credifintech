@@ -33,7 +33,7 @@ class Constantes {
   const MENSAJE_NO = "Lo sentimos, aún no contamos con convenios para tu área, le agradecemos su interés y sugerimos que nos siga en nuestras redes para futuras actualizaciones.";
 
   // Se despliega para solicitar más datos al usuario que no coincidió con los prospectos.
-  const MENSAJE_NO_DATOS = "Para notificarle de futuras actualizaciones en nuestros servicios, le solicitamos la siguiente información para mantenernos en contacto";
+  const MENSAJE_NO_DATOS = "Gracias por su tiempo, nos contactaremos con usted en cuanto tengamos servicios disponibles para su caso";
   
   // Preguntas
   const PREGUNTA_NOMBRE = "Escriba su nombre completo";

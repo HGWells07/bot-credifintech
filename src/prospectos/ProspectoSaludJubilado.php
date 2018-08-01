@@ -6,5 +6,6 @@ use BotCredifintech\Prospectos\Prospecto;
 
 class ProspectoSaludJubilado extends Prospecto{
   private $nss;
+  private $informeDePago;
 }
 ?>

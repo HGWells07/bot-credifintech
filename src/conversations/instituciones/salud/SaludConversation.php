@@ -30,11 +30,11 @@ use BotCredifintech\Conversations\Instituciones\Salud\ParitariaConversation;
 class SaludConversation extends Conversation
 {
 
-  private $user;
+  private $prospecto;
 
   public function __construct($prospecto)
   {
-      $this->$user = $prospecto;
+      $this->prospecto = $prospecto;
   }
 
   const PENSIONADOS = "Pensionados";
@@ -47,9 +47,11 @@ class SaludConversation extends Conversation
 
   protected $errores = 0;
 
-  public function askCategoria(){
-
-    $question = Question::create("¿En que categoría se encuentra usted?".$this->$user." respuesta")
+  public function askCategoria($prospecto){
+    if(!isset($prospecto)){
+      $prospecto = $this->prospecto;
+    }
+    $question = Question::create("$prospecto->nombre, ¿En que categoría se encuentra usted?")
         ->fallback('Si no pertenece a alguna de las anteriores categorías no se podrá proceder con la solicitud, lo sentimos, estamos en contacto')
         ->callbackId('ask_area_gobierno')
         ->addButtons([
@@ -59,20 +61,24 @@ class SaludConversation extends Conversation
             Button::create(self::PARITARIA)->value(self::PARITARIA),
         ]);
 
-    $this->ask($question, function (Answer $answer) {
+    $this->ask($question, function (Answer $answer) use ($prospecto){
       if ($answer->isInteractiveMessageReply()) {
         $selectedValue = $answer->getValue();
         if($selectedValue==self::PENSIONADOS){
-          $this->askRequerimientos(self::PENSIONADOS, ConstantesSalud::DATOS_PENSIONADO);
+          $prospecto->tipo = self::PENSIONADOS;
+          $this->askRequerimientos(self::PENSIONADOS, ConstantesSalud::DATOS_PENSIONADO, $prospecto);
         }
         if($selectedValue==self::CONFIANZA){
-          $this->askRequerimientos(self::CONFIANZA, ConstantesSalud::DATOS_CONFIANZA);
+          $prospecto->tipo = self::CONFIANZA;
+          $this->askRequerimientos(self::CONFIANZA, ConstantesSalud::DATOS_CONFIANZA, $prospecto);
         }
         if($selectedValue==self::JUBILADOS){
-          $this->askRequerimientos(self::JUBILADOS, ConstantesSalud::DATOS_JUBILADOS);
+          $prospecto->tipo = self::JUBILADOS;
+          $this->askRequerimientos(self::JUBILADOS, ConstantesSalud::DATOS_JUBILADOS, $prospecto);
         }
         if($selectedValue==self::PARITARIA){
-          $this->askRequerimientos(self::PARITARIA, ConstantesSalud::DATOS_PARITARIA);
+          $prospecto->tipo = self::PARITARIA;
+          $this->askRequerimientos(self::PARITARIA, ConstantesSalud::DATOS_PARITARIA, $prospecto);
         }
       } else {
         $this->errores += 1;
@@ -80,14 +86,14 @@ class SaludConversation extends Conversation
           $this->llamarAsesor();
         } else {
           $this->say(Constantes::MENSAJE_NAVEGACION_BOTONES);
-          $this->askCategoria();
+          $this->askCategoria($prospecto);
         }
         
     }
     });
   }
 
-  public function askRequerimientos($tipo, $req){
+  public function askRequerimientos($tipo, $req, $p){
 
     $conversations = [];
 
@@ -100,17 +106,16 @@ class SaludConversation extends Conversation
     
       $this->say(Constantes::MENSAJE_DATOS_REQUERIDOS);
       $this->say($req);
-      $this->ask($question, function (Answer $answer) use ($tipo){
+      $this->ask($question, function (Answer $answer) use ($tipo, $req, $p){
       $this->tipoInstitucion = $answer->getValue();
       if ($answer->isInteractiveMessageReply()) {
         $selectedValue = $answer->getValue(); // Tipo/Gobierno / Tipo/Privado / Tipo/Pensionado
         if($selectedValue=="Listo, empecemos"){
-
           $conversations = [
-            self::PENSIONADOS => new PensionadosConversation(),
-            self::CONFIANZA => new ConfianzaConversation(),
-            self::JUBILADOS => new JubiladosConversation(),
-            self::PARITARIA => new ParitariaConversation(),
+            self::PENSIONADOS => new PensionadosConversation($p),
+            self::CONFIANZA => new ConfianzaConversation($p),
+            self::JUBILADOS => new JubiladosConversation($p),
+            self::PARITARIA => new ParitariaConversation($p),
           ];
 
           $this->bot->StartConversation($conversations[$tipo]);
@@ -121,7 +126,7 @@ class SaludConversation extends Conversation
           $this->llamarAsesor();
         } else {
           $this->say(Constantes::MENSAJE_NAVEGACION_BOTONES);
-          $this->askRequerimientos();
+          $this->askRequerimientos($tipo, $req,$p);
         }
       }
     });
@@ -142,7 +147,7 @@ class SaludConversation extends Conversation
 	}
 
   public function run(){
-    $this->askCategoria();
+    $this->askCategoria($this->$prospecto);
   }
 }
 

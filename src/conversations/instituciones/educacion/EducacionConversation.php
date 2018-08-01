@@ -7,6 +7,7 @@ require __DIR__ . './../../../../vendor/autoload.php';
 require_once __DIR__ . "./../../../Constantes.php";
 require_once __DIR__ . "/ConstantesEducacion.php";
 require_once __DIR__ . "./../../SalidaConversation.php";
+require_once __DIR__ . "./../../../prospectos/ProspectoEducacion.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -20,13 +21,25 @@ use Mpociot\BotMan\Cache\DoctrineCache;
 use BotCredifintech\Constantes;
 use BotCredifintech\Conversations\SalidaConversation;
 use BotCredifintech\Conversations\Instituciones\Educacion\ConstantesEducacion;
+use BotCredifintech\Prospectos\ProspectoEducacion;
 
 class EducacionConversation extends Conversation {
 
   protected $errores = 0;
 
   protected $nombre, $telefono, $email, $seccionSindical, $plazoSeleccionado;
-  protected $imagenINE, $imagenInformePago;
+  protected $prospecto, $pEducacion;
+
+  public function __construct($prospecto)
+  {
+      $this->prospecto = $prospecto;
+      $this->pEducacion = new ProspectoEducacion();
+      $this->pEducacion->nombre = $prospecto->nombre;
+      $this->pEducacion->telefono = $prospecto->telefono;
+      $this->pEducacion->email = $prospecto->email;
+      $this->pEducacion->identificacion = $prospecto->identificacion;
+      $this->pEducacion->monto = $prospecto->identificacion;
+  }
 
   public function error(){
     $this->errores += 1;
@@ -38,14 +51,14 @@ class EducacionConversation extends Conversation {
     }
   }
 
-  public function askSeccionSindical(){
+  public function askSeccionSindical($pe){
     $this -> ask("¿En qué sección sindical estás afiliado?", function(Answer $response){
-      $this->seccionSindical = $response->getText();
-      $this-> askInformacion();
+      $pe->seccionSindical = $response->getText();
+      $this-> askInformacion($pe);
     });
   }
 
-  public function askPlazo(){
+  public function askPlazo($pe){
 
     $plazos = ConstantesEducacion::$plazos;
 
@@ -61,12 +74,12 @@ class EducacionConversation extends Conversation {
         ->callbackId('ask_lista_plazos')
         ->addButtons($buttonArray);
 
-    $this->ask($question, function (Answer $answer) use ($plazos) {
+    $this->ask($question, function (Answer $answer) use ($plazos, $pe) {
       if ($answer->isInteractiveMessageReply()) {
         $selectedValue = $answer->getValue();
         if(in_array($selectedValue, $plazos)){
-          $this -> $plazoSeleccionado = $selectedValue;
-          $this->askINE();
+          $pe->plazoSeleccionado = $selectedValue;
+          $this->askInformePago($pe);
         } else {
           $this->bot->startConversation(new SalidaConversation());
         }
@@ -76,7 +89,7 @@ class EducacionConversation extends Conversation {
     });
   }
 
-  public function askRequerimientos(){
+  public function askRequerimientos($pe){
 
     $conversations = [];
 
@@ -88,13 +101,13 @@ class EducacionConversation extends Conversation {
         ]);
     
       $this->say(Constantes::MENSAJE_DATOS_REQUERIDOS);
-      $this->say("Credencial INE/IFE y dos recibos de pago");
-      $this->ask($question, function (Answer $answer) use ($tipo){
+      $this->say("Dos recibos de pago");
+      $this->ask($question, function (Answer $answer) use ($tipo, $pe){
       $this->tipoInstitucion = $answer->getValue();
       if ($answer->isInteractiveMessageReply()) {
         $selectedValue = $answer->getValue(); // Tipo/Gobierno / Tipo/Privado / Tipo/Pensionado
         if($selectedValue=="Listo, empecemos"){
-          $this->askInformacion();
+          $this->askInformacion($pe);
         }
       } else {
         $this->error();
@@ -103,8 +116,8 @@ class EducacionConversation extends Conversation {
   
   }
 
-  public function askInformacion(){
-    $this -> askNombre(); 
+  public function askInformacion($pe){
+    $this -> askPlazo($pe); 
   }
 
   public function stopsConversation(IncomingMessage $message)
@@ -118,40 +131,6 @@ class EducacionConversation extends Conversation {
   }
   
   //Funciones para juntar datos
-  public function askNombre(){
-    $this -> ask(Constantes::PEDIR_NOMBRE, function(Answer $response){
-      $this->nombre = $response->getText();
-      $this-> askTelefono();
-    });
-  }
-
-  public function askTelefono(){
-    $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response){
-      $this->telefono = $response->getText();
-      $this-> askEmail();
-    });
-  }
-
-  public function askEmail(){
-    $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response){
-      $this->email = $response->getText();
-      $this-> askMonto();
-    });
-  }
-
-  public function askMonto(){
-    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response){
-      $this->monto = $response->getText();
-      $this-> askPlazo();
-    });
-  }
-
-  public function askINE()
-  {
-    $this->askForImages(Constantes::PEDIR_INE, function ($images) {
-        $this->askInformePago();
-    });
-  }
 
   public function askInformePago()
   {
@@ -167,7 +146,8 @@ class EducacionConversation extends Conversation {
   }
 
   public function run(){
-    $this -> askSeccionSindical();
+    $pe = $this->pEducacion;
+    $this -> askSeccionSindical($pe);
   }
 
 }

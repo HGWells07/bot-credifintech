@@ -54,9 +54,9 @@ $botman = BotManFactory::create(Constantes::CONFIG, new DoctrineCache($doctrineC
 
 $botman->hears('^(?!.*\basesor|ASESOR|Asesor\b).*$', function (BotMan $bot) {
   $nombre = $bot->getUser()->getFirstName();
-  $bot -> typesAndWaits(1);
+  //$bot -> typesAndWaits(1);
   $bot -> reply("Bienvenido $nombre. Somos una empresa que se dedica a dar créditos a los sectores de gobierno, IMSS y de la SEP");
-  $bot -> typesAndWaits(1);
+  //$bot -> typesAndWaits(1);
   $bot -> startConversation(new MenuConversation($nombre));
 });
 

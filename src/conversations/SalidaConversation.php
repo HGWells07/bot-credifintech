@@ -27,28 +27,6 @@ class SalidaConversation extends Conversation
   public function askDatosSalida(){
     $this -> say(Constantes::MENSAJE_NO);
     $this -> say(Constantes::MENSAJE_NO_DATOS);
-    $this -> askNombre();
-  }
-
-  public function askNombre(){
-    $this -> ask("Escriba su nombre completo", function(Answer $answer){
-      $this -> $nombre = $answer -> getValue();
-      $this -> askTelefono();
-    });
-  }
-
-  public function askTelefono(){
-    $this -> ask("Escriba su telefono por favor", function(Answer $answer){
-      $this -> $telefono = $answer -> getValue();
-      $this -> askEmail();
-    });
-  }
-
-  public function askEmail(){
-    $this -> ask("Escriba su correo electrónico", function(Answer $answer){
-      $this -> $email = $answer -> getValue();
-      $this -> say("Gracias por su tiempo, nos contactaremos con usted en cuanto tengamos servicios disponibles para su caso");
-    });
   }
 
   public function run(){

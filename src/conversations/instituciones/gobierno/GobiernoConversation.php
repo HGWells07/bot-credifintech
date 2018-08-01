@@ -7,6 +7,7 @@ require __DIR__ . './../../../../vendor/autoload.php';
 require_once __DIR__ . "./../../../Constantes.php";
 require_once __DIR__ . "./../../SalidaConversation.php";
 require_once __DIR__."/ConstantesGobierno.php";
+require_once __DIR__ . "./../../../prospectos/ProspectoGobierno.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -20,12 +21,23 @@ use Mpociot\BotMan\Cache\DoctrineCache;
 use BotCredifintech\Constantes;
 use BotCredifintech\Conversations\SalidaConversation;
 use BotCredifintech\Conversations\Instituciones\Gobierno\ConstantesGobierno;
+use BOtCredifintech\Prospectos\ProspectoGobierno;
 
 
 class GobiernoConversation extends Conversation {
 
-  protected $nombre, $telefono, $nss;
-  protected $imagenINE, $imagenInformePago;
+  protected $prospecto, $pGobierno;
+
+  public function __construct($prospecto)
+  {
+      $this->prospecto = $prospecto;
+      $this->pGobierno = new ProspectoGobierno();
+      $this->pGobierno->nombre = $prospecto->nombre;
+      $this->pGobierno->telefono = $prospecto->telefono;
+      $this->pGobierno->email = $prospecto->email;
+      $this->pGobierno->identificacion = $prospecto->identificacion;
+      $this->pGobierno->monto = $prospecto->identificacion;
+  }
 
   protected $errores = 0;
   protected $estadoSeleccionado = "";
@@ -40,7 +52,7 @@ class GobiernoConversation extends Conversation {
     }
   }
 
-  public function askEstados(){
+  public function askEstados($pg){
 
     $estados = ConstantesGobierno::$estados;
 
@@ -56,12 +68,13 @@ class GobiernoConversation extends Conversation {
         ->callbackId('ask_lista_estados')
         ->addButtons($buttonArray);
 
-    $this->ask($question, function (Answer $answer) use ($estados) {
+    $this->ask($question, function (Answer $answer) use ($estados, $pg) {
       if ($answer->isInteractiveMessageReply()) {
         $selectedValue = $answer->getValue();
+        $pg->estado = $selectedValue;
         if(in_array($selectedValue, $estados)){
           $this -> $estadoSeleccionado = $selectedValue;
-          $this->askRequerimientos();
+          $this->askRequerimientos($pg);
         } else {
           $this->bot->startConversation(new SalidaConversation());
         }
@@ -71,7 +84,7 @@ class GobiernoConversation extends Conversation {
     });
   }
 
-  public function askRequerimientos(){
+  public function askRequerimientos($pg){
 
     $conversations = [];
 
@@ -83,13 +96,13 @@ class GobiernoConversation extends Conversation {
         ]);
     
       $this->say(Constantes::MENSAJE_DATOS_REQUERIDOS);
-      $this->say("Credencial INE/IFE y dos recibos de pago");
-      $this->ask($question, function (Answer $answer) use ($tipo){
+      $this->say("Dos recibos de pago");
+      $this->ask($question, function (Answer $answer) use ($tipo, $pg){
       $this->tipoInstitucion = $answer->getValue();
       if ($answer->isInteractiveMessageReply()) {
         $selectedValue = $answer->getValue(); // Tipo/Gobierno / Tipo/Privado / Tipo/Pensionado
         if($selectedValue=="Listo, empecemos"){
-          $this->askInformacion();
+          $this->askInformacion($pg);
         }
       } else {
         $this->error();
@@ -98,8 +111,8 @@ class GobiernoConversation extends Conversation {
   
   }
 
-  public function askInformacion(){
-    $this -> askNombre(); 
+  public function askInformacion($pg){
+    $this -> askInformePago($pg); 
   }
 
   public function stopsConversation(IncomingMessage $message)
@@ -111,48 +124,11 @@ class GobiernoConversation extends Conversation {
 
 		return false;
   }
-  
-  //Funciones para juntar datos
-  public function askNombre(){
-    $this -> ask(Constantes::PEDIR_NOMBRE, function(Answer $response){
-      $this->nombre = $response->getText();
-      $this-> askTelefono();
-    });
-  }
 
-  public function askTelefono(){
-    $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response){
-      $this->telefono = $response->getText();
-      $this-> askEmail();
-    });
-  }
-
-  public function askEmail(){
-    $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response){
-      $this->email = $response->getText();
-      $this-> askMonto();
-    });
-  }
-
-  public function askMonto(){
-    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response){
-      $this->monto = $response->getText();
-      $this-> askINE();
-    });
-  }
-
-  public function askINE()
-  {
-    $this->askForImages(Constantes::PEDIR_INE, function ($images) {
-        $this -> $imagenINE = $images;
-        $this->askInformePago();
-    });
-  }
-
-  public function askInformePago()
+  public function askInformePago($pg)
   {
     $this->askForImages("Tome una foto a sus últimos dos recibos de pago, envíelas de preferencia en grupo", function ($images) {
-      $this->$imagenInformePago = $images;    
+      $pg->informeDePago = $images;    
       $this->askTerminar(); 
     });
   }
@@ -165,7 +141,8 @@ class GobiernoConversation extends Conversation {
   }
 
   public function run(){
-    $this -> askEstados();
+    $pg = $this->pGobierno;
+    $this -> askEstados($pg);
   }
 
 }

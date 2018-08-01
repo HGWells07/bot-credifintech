@@ -7,6 +7,7 @@ require __DIR__ . './../../../../vendor/autoload.php';
 require_once __DIR__ . "./../../../Constantes.php";
 require_once __DIR__ . "./../../SalidaConversation.php";
 require_once __DIR__ . "/ConstantesSalud.php";
+require_once __DIR__ . "./../../../prospectos/ProspectoSaludJubilado.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -21,15 +22,27 @@ use BotCredifintech\Constantes;
 use BotCredifintech\Conversations\SalidaConversation;
 use BotCredifintech\Conversations\Insituciones\SaludConversation;
 use BotCredifintech\Conversations\Instituciones\Salud\ConstantesSalud;
+use BotCredifintech\Prospectos\ProspectoSaludJubilado;
 
 class JubiladosConversation extends Conversation
 {
-  protected $nombre, $telefono, $nss;
-  protected $imagenINE, $imagenInformePago;
+  protected $prospecto, $pJubilado;
+
+  public function __construct($prospecto)
+  {
+      $this->prospecto = $prospecto;
+      $this->pJubilado = new ProspectoSaludJubilado();
+      $this->pJubilado->nombre = $prospecto->nombre;
+      $this->pJubilado->telefono = $prospecto->telefono;
+      $this->pJubilado->email = $prospecto->email;
+      $this->pJubilado->identificacion = $prospecto->identificacion;
+      $this->pJubilado->monto = $prospecto->identificacion;
+  }
 
 
   public function askInformacion(){
-    $this -> askNombre(); 
+    $pj = $this->pJubilado;
+    $this -> askNombre($pj); 
   }
 
   public function stopsConversation(IncomingMessage $message)
@@ -42,53 +55,18 @@ class JubiladosConversation extends Conversation
 		return false;
   }
   
-  //Funciones para juntar datos
-  public function askNombre(){
-    $this -> ask(Constantes::PEDIR_NOMBRE, function(Answer $response){
-      $this->nombre = $response->getText();
-      $this-> askTelefono();
+  public function askNSS($pj){
+    $this -> ask(Constantes::PEDIR_NSS, function(Answer $response) use ($pj){
+      $pj->nss = $response->getText();
+      $this->askInformePago($pj);
     });
   }
 
-  public function askTelefono(){
-    $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response){
-      $this->telefono = $response->getText();
-      $this-> askEmail();
-    });
-  }
-
-  public function askEmail(){
-    $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response){
-      $this->email = $response->getText();
-      $this-> askMonto();
-    });
-  }
-
-  public function askMonto(){
-    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response){
-      $this->monto = $response->getText();
-      $this-> askNSS();
-    });
-  }
-
-  public function askNSS(){
-    $this -> ask(Constantes::PEDIR_NSS, function(Answer $response){
-      $this->nss = $response->getText();
-      $this-> askINE();
-    });
-  }
-
-  public function askINE()
+  public function askInformePago($pj)
   {
-    $this->askForImages(Constantes::PEDIR_INE, function ($images) {
-        $this->askInformePago();
-    });
-  }
-
-  public function askInformePago()
-  {
-    $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) {
-        $this->askTerminar(); 
+    $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pj) {
+      $pj->informeDePago = $images;
+        $this->askTerminar($pj); 
     });
   }
 

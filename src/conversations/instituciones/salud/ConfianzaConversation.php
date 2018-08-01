@@ -7,6 +7,7 @@ require __DIR__ . './../../../../vendor/autoload.php';
 require_once __DIR__ . "./../../../Constantes.php";
 require_once __DIR__ . "./../../SalidaConversation.php";
 require_once __DIR__ . "/ConstantesSalud.php";
+require_once __DIR__ . "./../../../prospectos/PropspectoSaludConfianza.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -21,15 +22,26 @@ use BotCredifintech\Constantes;
 use BotCredifintech\Conversations\SalidaConversation;
 use BotCredifintech\Conversations\Insituciones\SaludConversation;
 use BotCredifintech\Conversations\Instituciones\Salud\ConstantesSalud;
+use BotCredifintech\Prospectos\PropspectoSaludConfianza;
 
 class ConfianzaConversation extends Conversation
 {
-  protected $nombre, $telefono, $matricula, $numDelegacion;
-  protected $imagenINE, $imagenInformePago;
+  protected $prospecto, $pConfianza;
 
+  public function __construct($prospecto)
+  {
+      $this->prospecto = $prospecto;
+      $this->pConfianza = new PropspectoSaludConfianza();
+      $this->pConfianza->nombre = $prospecto->nombre;
+      $this->pConfianza->telefono = $prospecto->telefono;
+      $this->pConfianza->email = $prospecto->email;
+      $this->pConfianza->identificacion = $prospecto->identificacion;
+      $this->pConfianza->monto = $prospecto->identificacion;
+  }
 
   public function askInformacion(){
-    $this -> askNombre(); 
+    $pc = $this->pConfianza;
+    $this -> askMatricula($pc); 
   }
 
   public function stopsConversation(IncomingMessage $message)
@@ -41,60 +53,18 @@ class ConfianzaConversation extends Conversation
 
 		return false;
   }
-  
-  //Funciones para juntar datos
-  public function askNombre(){
-    $this -> ask(Constantes::PEDIR_NOMBRE, function(Answer $response){
-      $this->nombre = $response->getText();
-      $this-> askTelefono();
+
+  public function askMatricula($pc){
+    $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response) use ($pc){
+      $pc->matricula = $response->getText();
+      $this-> askInformePago($pc);
     });
   }
 
-  public function askTelefono(){
-    $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response){
-      $this->telefono = $response->getText();
-      $this-> askEmail();
-    });
-  }
-
-  public function askEmail(){
-    $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response){
-      $this->email = $response->getText();
-      $this-> askMonto();
-    });
-  }
-
-  public function askMonto(){
-    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response){
-      $this->monto = $response->getText();
-      $this-> askMatricula();
-    });
-  }
-
-  public function askMatricula(){
-    $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response){
-      $this->matricula = $response->getText();
-      $this-> askNumDelegacion();
-    });
-  }
-
-  public function askNumDelegacion(){
-    $this -> ask(Constantes::PEDIR_NUM_DELEGACION_ADSCRIPCION, function(Answer $response){
-      $this->numDelegacion = $response->getText();
-      $this-> askINE();
-    });
-  }
-
-  public function askINE()
+  public function askInformePago($pc)
   {
-    $this->askForImages(Constantes::PEDIR_INE, function ($images) {
-        $this->askInformePago();
-    });
-  }
-
-  public function askInformePago()
-  {
-    $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) {
+    $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pc){
+        $pc->informeDePago = $images;
         $this->askTerminar(); 
     });
   }

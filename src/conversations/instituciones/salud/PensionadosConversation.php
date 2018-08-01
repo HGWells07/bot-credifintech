@@ -7,6 +7,7 @@ require __DIR__ . './../../../../vendor/autoload.php';
 require_once __DIR__ . "./../../../Constantes.php";
 require_once __DIR__ . "./../../SalidaConversation.php";
 require_once __DIR__ . "/ConstantesSalud.php";
+require_once __DIR__ . "./../../../prospectos/ProspectoSaludPensionado.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -21,15 +22,27 @@ use BotCredifintech\Constantes;
 use BotCredifintech\Conversations\SalidaConversation;
 use BotCredifintech\Conversations\Insituciones\SaludConversation;
 use BotCredifintech\Conversations\Instituciones\Salud\ConstantesSalud;
+use BotCredifintech\Prospectos\ProspectoSaludPensionado;
 
 class PensionadosConversation extends Conversation
 {
-  protected $nombre, $telefono, $nss, $email;
-  protected $imagenINE, $imagenInformePago;
 
+  private $prospecto, $pPensionado;
+
+  public function __construct($prospecto)
+  {
+      $this->prospecto = $prospecto;
+      $this->pPensionado = new ProspectoSaludPensionado();
+      $this->pPensionado->nombre = $prospecto->nombre;
+      $this->pPensionado->telefono = $prospecto->telefono;
+      $this->pPensionado->email = $prospecto->email;
+      $this->pPensionado->identificacion = $prospecto->identificacion;
+      $this->pPensionado->monto = $prospecto->identificacion;
+  }
 
   public function askInformacion(){
-    $this -> askNombre(); 
+    $pp = $this->pPensionado;
+    $this -> askNSS($pp); 
   }
 
   public function stopsConversation(IncomingMessage $message)
@@ -41,58 +54,23 @@ class PensionadosConversation extends Conversation
 
 		return false;
   }
-  
-  //Funciones para juntar datos
-  public function askNombre(){
-    $this -> ask(Constantes::PEDIR_NOMBRE, function(Answer $response){
-      $this->nombre = $response->getText();
-      $this-> askTelefono();
+
+  public function askNSS($pp){
+    $this -> ask(Constantes::PEDIR_NSS, function(Answer $response) use ($pp){
+      $pp->nss = $response->getText();
+      $this->askInformePago($pp);
     });
   }
 
-  public function askTelefono(){
-    $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response){
-      $this->telefono = $response->getText();
-      $this-> askEmail();
-    });
-  }
-
-  public function askEmail(){
-    $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response){
-      $this->email = $response->getText();
-      $this-> askMonto();
-    });
-  }
-
-  public function askMonto(){
-    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response){
-      $this->monto = $response->getText();
-      $this-> askNSS();
-    });
-  }
-
-  public function askNSS(){
-    $this -> ask(Constantes::PEDIR_NSS, function(Answer $response){
-      $this->nss = $response->getText();
-      $this-> askINE();
-    });
-  }
-
-  public function askINE()
+  public function askInformePago($pp)
   {
-    $this->askForImages(Constantes::PEDIR_INE, function ($images) {
-        $this->askInformePago();
+    $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pp) {
+      $pp->informeDePago = $images;
+        $this->askTerminar($pp); 
     });
   }
 
-  public function askInformePago()
-  {
-    $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) {
-        $this->askTerminar(); 
-    });
-  }
-
-  public function askTerminar(){
+  public function askTerminar($pp){
     $this->ask(Constantes::MENSAJE_SOLICITUD_TERMINADA, function(Answer $response){
       return false;
     });

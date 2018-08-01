@@ -25,6 +25,7 @@ use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
+use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 
 use Mpociot\BotMan\Cache\DoctrineCache;
 
@@ -35,14 +36,16 @@ class SolicitarDatosConversation extends Conversation{
   private $selectedValue;
   private $prospecto;
 
-  public function __construct($tipo)
+  public function __construct($selectedValue)
   {
-      $this->selectedValue = $tipo;
+      $this->selectedValue = $selectedValue;
       $this->prospecto = new Prospecto();
   }
 
   public function askInformacion(){
-    $this -> askNombre(); 
+    $sv = $this->selectedValue;
+    $p = $this->prospecto;
+    $this -> askNombre($p, $sv); 
   }
 
   public function stopsConversation(IncomingMessage $message)
@@ -56,50 +59,51 @@ class SolicitarDatosConversation extends Conversation{
   }
   
   //Funciones para juntar datos
-  public function askNombre(){
-    $this -> ask(Constantes::PEDIR_NOMBRE, function(Answer $response){
+  public function askNombre($p, $sv){
+    $this -> ask(Constantes::PEDIR_NOMBRE, function(Answer $response) use ($p, $sv){
       $nombre = $response->getText();
-      $this->$prospecto->nombre = $nombre;
-      $this-> askTelefono();
+      $p->nombre = $nombre;
+      $this-> askTelefono($p, $sv);
     });
   }
 
-  public function askTelefono(){
-    $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response){
+  public function askTelefono($p, $sv){
+    $this -> ask(Constantes::PEDIR_TELEFONO, function(Answer $response) use ($p, $sv){
       $telefono = $response->getText();
-      $this->$prospecto->telefono = $telefono;
-      $this-> askEmail();
+      $p->telefono = $telefono;
+      $this-> askEmail($p, $sv);
     });
   }
 
-  public function askEmail(){
-    $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response){
+  public function askEmail($p, $sv){
+    $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response) use ($p, $sv){
       $email = $response->getText();
-      $this->$prospecto->email = $email;
-      $this-> askMonto();
+      $p->email = $email;
+      $this-> askMonto($p, $sv);
     });
   }
 
-  public function askMonto(){
-    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response){
+  public function askMonto($p, $sv){   
+    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response) use ($p, $sv){
       $monto = $response->getText();
-      $this->$prospecto->email = $email;
-      $this-> askINE();
+      $p->monto = $monto;
+      $this-> askINE($p, $sv);
     });
   }
 
-  public function askINE(){
-    $this->askForImages(Constantes::PEDIR_INE, function ($images) {
-      if($this->$selectedValue=="Area/Salud"){
-        $this->bot->startConversation(new SaludConversation());
+  public function askINE($p, $sv) {
+    $this->askForImages(Constantes::PEDIR_INE, function ($images) use ($p, $sv) {
+      $p->identificacion = $images;
+      if($sv=="Area/Salud"){
+        $this->bot->startConversation(new SaludConversation($p));
       }
-      if($this->$selectedValue=="Area/Educación"){
-        $this->bot->startConversation(new EducacionConversation());
+      if($sv=="Area/Educación"){
+        $this->bot->startConversation(new EducacionConversation($p));
       }
-      if($this->$selectedValue=="Area/Gobierno"){
-        $this->bot->startConversation(new GobiernoConversation());
+      if($sv=="Area/Gobierno"){
+        $this->bot->startConversation(new GobiernoConversation($p));
       }
-      if($this->$selectedValue=="Area/Ninguna"){
+      if($sv=="Area/Ninguna"){
         $this->bot->startConversation(new SalidaConversation());
       }
     });

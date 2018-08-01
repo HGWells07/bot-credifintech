@@ -6,5 +6,6 @@ use BotCredifintech\Prospectos\Prospecto;
 
 class ProspectoGobierno extends Prospecto{
   private $estado;
+  private $informeDePago;
 }
 ?>

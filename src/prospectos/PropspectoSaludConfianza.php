@@ -1,10 +1,11 @@
 <?php
-namespace BotCredifintech\Prospectos\ProspectoSaludGobierno;
+namespace BotCredifintech\Prospectos;
 
 require_once __DIR__."./Prospecto.php";
 use BotCredifintech\Prospectos\Prospecto;
 
-class ProspectoSaludGobierno extends Prospecto{
+class PropspectoSaludConfianza extends Prospecto{
   private $matricula;
+  private $informeDePago;
 }
 ?>
