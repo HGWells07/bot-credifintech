@@ -10,6 +10,7 @@ require_once __DIR__ . "/instituciones/salud/SaludConversation.php";
 require_once __DIR__ . "/instituciones/gobierno/GobiernoConversation.php";
 require_once __DIR__ . "/instituciones/educacion/EducacionConversation.php";
 require_once __DIR__."/SalidaConversation.php";
+require_once __DIR__ . "./../curlwrap_v2.php";
 
 use BotCredifintech\Conversations\Instituciones\Salud\SaludConversation;
 use BotCredifintech\Conversations\Instituciones\Educacion\EducacionConversation;
@@ -128,6 +129,9 @@ class SolicitarDatosConversation extends Conversation{
           ),
         ),
       );
+
+      $contact_json = json_encode($contact_json);
+      curl_wrap("contacts", $contact_json, "POST", "application/json");
 
       if($sv=="Area/Salud"){
         $this->bot->startConversation(new SaludConversation($p));
