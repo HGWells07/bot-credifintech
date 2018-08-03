@@ -4,10 +4,10 @@ namespace BotCredifintech\Conversations\Instituciones\Gobierno;
 
 require __DIR__ . './../../../../vendor/autoload.php';
 
-require_once __DIR__ . "./../../../Constantes.php";
-require_once __DIR__ . "./../../SalidaConversation.php";
+require_once __DIR__ . "/../../../Constantes.php";
+require_once __DIR__ . "/../../SalidaConversation.php";
 require_once __DIR__."/ConstantesGobierno.php";
-require_once __DIR__ . "./../../../prospectos/ProspectoGobierno.php";
+require_once __DIR__ . "/../../../prospectos/ProspectoGobierno.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
