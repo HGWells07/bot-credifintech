@@ -5,15 +5,17 @@ namespace BotCredifintech\Prospectos;
 class Prospecto {
 
   protected $nombre;
+  protected $apellido;
   protected $telefono;
   protected $email;
   protected $monto;
   protected $identificacion;
   protected $tipo;
 
-  static function constructWithInfo($nombre, $telefono, $email, $monto, $identificacion){
+  static function constructWithInfo($nombre, $apellido, $telefono, $email, $monto, $identificacion){
     $object = new Prospecto();
     $object->nombre = $nombre;
+    $object->apellido = $apellido;
     $object->telefono = $telefono;
     $object->identificacion = $identificacion;
     $object->email = $email;

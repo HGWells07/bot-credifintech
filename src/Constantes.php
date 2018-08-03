@@ -18,7 +18,8 @@ class Constantes {
 
   //Mensajes para conversaciones
 
-  const PEDIR_NOMBRE = "Escriba su nombre completo";
+  const PEDIR_NOMBRE = "Escriba su nombre (sin apellidos)";
+  const PEDIR_APELLIDO = "Escriba sus apellidos";
   const PEDIR_TELEFONO = "Escriba su número de teléfono";
   const PEDIR_NSS = "Escriba su NSS";
   const PEDIR_MATRICULA = "Escriba su número de matrícula";

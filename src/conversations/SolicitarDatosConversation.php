@@ -63,6 +63,14 @@ class SolicitarDatosConversation extends Conversation{
     $this -> ask(Constantes::PEDIR_NOMBRE, function(Answer $response) use ($p, $sv){
       $nombre = $response->getText();
       $p->nombre = $nombre;
+      $this-> askApellido($p, $sv);
+    });
+  }
+
+  public function askApellido($p, $sv){
+    $this -> ask(Constantes::PEDIR_APELLIDO, function(Answer $response) use ($p, $sv){
+      $apellido = $response->getText();
+      $p->apellido = $apellido;
       $this-> askTelefono($p, $sv);
     });
   }
@@ -94,6 +102,33 @@ class SolicitarDatosConversation extends Conversation{
   public function askINE($p, $sv) {
     $this->askForImages(Constantes::PEDIR_INE, function ($images) use ($p, $sv) {
       $p->identificacion = $images;
+      // Primer guardado de información
+
+      $contact_json =array(
+        "properties"=>array(
+          array(
+            "name"=>"first_name",
+            "value"=>$p->nombre,
+            "type"=>"SYSTEM"
+          ),
+          array(
+            "name"=>"last_name",
+            "value"=>$p->apellido,
+            "type"=>"SYSTEM"
+          ),
+          array(
+            "name"=>"email",
+            "value"=>$p->email,
+            "type"=>"SYSTEM"
+          ),  
+          array(
+              "name"=>"phone",
+              "value"=>$p->telefono,
+              "type"=>"SYSTEM"
+          ),
+        ),
+      );
+
       if($sv=="Area/Salud"){
         $this->bot->startConversation(new SaludConversation($p));
       }
