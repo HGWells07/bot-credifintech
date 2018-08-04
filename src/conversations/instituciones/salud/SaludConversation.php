@@ -10,6 +10,7 @@ require_once __DIR__ . "/PensionadosConversation.php";
 require_once __DIR__ . "/ConfianzaConversation.php";
 require_once __DIR__ . "/JubiladosConversation.php";
 require_once __DIR__ . "/ParitariaConversation.php";
+require_once __DIR__ . "/../../../curlwrap_v2.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -96,6 +97,26 @@ class SaludConversation extends Conversation
   public function askRequerimientos($tipo, $req, $p){
 
     $conversations = [];
+    $imss = "IMSS";
+    $p->etiquetas.array_push($imss, $tipo);
+
+    $this->say("Array etiquetas: ".var_dump($p->etiquetas));
+
+    $fromCRM = curl_wrap("contacts/search/email/".$p->email, null, "GET", "application/json");
+    $this->say("Coded: ".$fromCRM);
+    $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
+    $id = $fromCRMarr["id"];
+    $this->say("Id: ".$id);
+    //$this->say("info: ".$fromCRMarr);
+
+    $contact_update = array(
+      "id" => $id, //It is mandatory field. Id of contact
+      "tags" => array($imss, $tipo),
+    );
+    $contact_update = json_encode($contact_update);
+
+    $output = curl_wrap("contacts/edit/tags", $contact_update, "PUT", "application/json");
+    $this->say("Output: ".$output);
 
     $question = Question::create(Constantes::PREGUNTA_DOCUMENTACION)
         ->fallback('En orden de realizar esta solicitud son necesarios estos documentos y datos, sin ellos no podrá continuar')

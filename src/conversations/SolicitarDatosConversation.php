@@ -131,8 +131,8 @@ class SolicitarDatosConversation extends Conversation{
       );
 
       $contact_json = json_encode($contact_json);
-      curl_wrap("contacts", $contact_json, "POST", "application/json");
-
+      $output = curl_wrap("contacts", $contact_json, "POST", "application/json");
+      $this->say("Output: <br/> ".$output);
       if($sv=="Area/Salud"){
         $this->bot->startConversation(new SaludConversation($p));
       }
