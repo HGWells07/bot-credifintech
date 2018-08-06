@@ -41,7 +41,9 @@ DriverManager::loadDriver(\Botman\Drivers\Facebook\FacebookFileDriver::class);
 
 $config = [
   'facebook'=> [
-      'token' => 'EAAFamui1cCoBAGbrNG3AX6g1q36eIwGfZAEg9AH3FZAD8pSFwVMpKXOPeUdg5dbcuytXf2fyHD3UyjlGEepSyoLJKPY8iKTaSPAlpxTl1nY31gop0ZChIoyaZCIatBY44SysqrHJbx3FYVamqeKshMKX6iiHBngrGK56C2fi3QZDZD',
+      //Credifintech
+      'app_secret' => 'EAAFamui1cCoBAJdTlod7xIdCST4C2tZCZCrERK97wyXgAvFdp2k2Dyr9qt6yZAMLaP7OwCz9Gw55Xr1UjexdyYhaCErJmGp9L037zqBWklGcRyUY6KId71R1OSMM2ZCR4EpPsQRRBafZCZAgnJgseDRZBS8hYoen4wYQ7LJIp4wdQZDZD',
+      //Botencio'token' => 'EAAFamui1cCoBAGbrNG3AX6g1q36eIwGfZAEg9AH3FZAD8pSFwVMpKXOPeUdg5dbcuytXf2fyHD3UyjlGEepSyoLJKPY8iKTaSPAlpxTl1nY31gop0ZChIoyaZCIatBY44SysqrHJbx3FYVamqeKshMKX6iiHBngrGK56C2fi3QZDZD',
       'app_secret' => 'c69036db967a97517be694473c59b8f2', 
       'verification'=>'23894sdf980sf9sdf9d2jaibaveracruzana2000',
   ]
