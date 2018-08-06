@@ -5,7 +5,7 @@ require_once __DIR__."/Prospecto.php";
 use BotCredifintech\Prospectos\Prospecto;
 
 class PropspectoSaludConfianza extends Prospecto{
-  private $matricula;
-  private $informeDePago;
+  public $matricula;
+  public $informeDePago;
 }
 ?>

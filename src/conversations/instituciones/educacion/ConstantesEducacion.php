@@ -4,6 +4,6 @@ namespace BotCredifintech\Conversations\Instituciones\Educacion;
 
 class ConstantesEducacion {
 
-  static $plazos = ["2","24", "36", "49", "60"];
+  static $plazos = ["12","24", "36", "48", "60"];
 
 }

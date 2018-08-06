@@ -8,6 +8,7 @@ require_once __DIR__ . "/../../../Constantes.php";
 require_once __DIR__ . "/ConstantesEducacion.php";
 require_once __DIR__ . "/../../SalidaConversation.php";
 require_once __DIR__ . "/../../../prospectos/ProspectoEducacion.php";
+require_once __DIR__ . "/../../../curlwrap_v2.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -27,7 +28,6 @@ class EducacionConversation extends Conversation {
 
   protected $errores = 0;
 
-  protected $nombre, $telefono, $email, $seccionSindical, $plazoSeleccionado;
   protected $prospecto, $pEducacion;
 
   public function __construct($prospecto)
@@ -52,8 +52,8 @@ class EducacionConversation extends Conversation {
   }
 
   public function askSeccionSindical($pe){
-    $this -> ask("¿En qué sección sindical estás afiliado?", function(Answer $response){
-      $pe->seccionSindical = $response->getText();
+    $this -> ask("¿En qué sección sindical estás afiliado?", function(Answer $response) use ($pe){
+      $pe->seccionSindical = "Seccion Sindical ".$response->getText();
       $this-> askInformacion($pe);
     });
   }
@@ -76,9 +76,24 @@ class EducacionConversation extends Conversation {
 
     $this->ask($question, function (Answer $answer) use ($plazos, $pe) {
       if ($answer->isInteractiveMessageReply()) {
+        $edu = "Educacion";
+        $seccionSindical = $pe->seccionSindical;
+
         $selectedValue = $answer->getValue();
+        $pe->plazoSeleccionado = "Plazos ".$selectedValue;
+
+        $fromCRM = curl_wrap("contacts/search/email/".$pe->email, null, "GET", "application/json");
+        $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
+        $id = $fromCRMarr["id"];
+        $pe->id = $id;
+        $contact_update = array(
+          "id" => $id, //It is mandatory field. Id of contact
+          "tags" => array($edu, $pe->plazoSeleccionado, $seccionSindical)
+        );
+        $contact_update = json_encode($contact_update);
+        $output = curl_wrap("contacts/edit/tags", $contact_update, "PUT", "application/json");
+
         if(in_array($selectedValue, $plazos)){
-          $pe->plazoSeleccionado = $selectedValue;
           $this->askInformePago($pe);
         } else {
           $this->bot->startConversation(new SalidaConversation());
@@ -132,10 +147,10 @@ class EducacionConversation extends Conversation {
   
   //Funciones para juntar datos
 
-  public function askInformePago()
+  public function askInformePago($pe)
   {
-    $this->askForImages("Tome una foto a sus últimos tres recibos de pago, envíelas de preferencia en grupo", function ($images) {
-        $this->askTerminar(); 
+    $this->askForImages("Tome una foto a sus últimos tres recibos de pago, envíelas de preferencia en grupo", function ($images) use ($pe){
+      $this->askTerminar(); 
     });
   }
 

@@ -100,13 +100,9 @@ class SaludConversation extends Conversation
     $imss = "IMSS";
     $p->etiquetas.array_push($imss, $tipo);
 
-    $this->say("Array etiquetas: ".var_dump($p->etiquetas));
-
     $fromCRM = curl_wrap("contacts/search/email/".$p->email, null, "GET", "application/json");
-    $this->say("Coded: ".$fromCRM);
     $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
     $id = $fromCRMarr["id"];
-    $this->say("Id: ".$id);
     //$this->say("info: ".$fromCRMarr);
 
     $contact_update = array(
@@ -114,9 +110,7 @@ class SaludConversation extends Conversation
       "tags" => array($imss, $tipo),
     );
     $contact_update = json_encode($contact_update);
-
-    $output = curl_wrap("contacts/edit/tags", $contact_update, "PUT", "application/json");
-    $this->say("Output: ".$output);
+    curl_wrap("contacts/edit/tags", $contact_update, "PUT", "application/json");
 
     $question = Question::create(Constantes::PREGUNTA_DOCUMENTACION)
         ->fallback('En orden de realizar esta solicitud son necesarios estos documentos y datos, sin ellos no podrá continuar')

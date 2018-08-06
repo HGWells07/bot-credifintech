@@ -13,6 +13,7 @@ class Prospecto {
   protected $tipo;
   protected $etiquetas = array();
   protected $notas;
+  protected $id;
 
   static function constructWithInfo($nombre, $apellido, $telefono, $email, $monto, $identificacion){
     $object = new Prospecto();
