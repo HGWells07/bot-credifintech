@@ -9,6 +9,7 @@ require_once __DIR__."/src/conversations/MenuConversation.php";
 require_once __DIR__."/src/conversations/SalidaConversation.php";
 
 //Extra Facebook Drivers
+//require_once __DIR__."/vendor/botman/driver-facebook/src/FacebookDriver.php";
 require_once __DIR__."/vendor/botman/driver-facebook/src/FacebookImageDriver.php";
 require_once __DIR__."/vendor/botman/driver-facebook/src/FacebookFileDriver.php";
 
@@ -41,24 +42,21 @@ DriverManager::loadDriver(\Botman\Drivers\Facebook\FacebookFileDriver::class);
 
 $config = [
   'facebook'=> [
-      //Credifintech
-      'app_secret' => 'EAAFamui1cCoBAJdTlod7xIdCST4C2tZCZCrERK97wyXgAvFdp2k2Dyr9qt6yZAMLaP7OwCz9Gw55Xr1UjexdyYhaCErJmGp9L037zqBWklGcRyUY6KId71R1OSMM2ZCR4EpPsQRRBafZCZAgnJgseDRZBS8hYoen4wYQ7LJIp4wdQZDZD',
-      //Botencio'token' => 'EAAFamui1cCoBAGbrNG3AX6g1q36eIwGfZAEg9AH3FZAD8pSFwVMpKXOPeUdg5dbcuytXf2fyHD3UyjlGEepSyoLJKPY8iKTaSPAlpxTl1nY31gop0ZChIoyaZCIatBY44SysqrHJbx3FYVamqeKshMKX6iiHBngrGK56C2fi3QZDZD',
-      'app_secret' => 'c69036db967a97517be694473c59b8f2', 
-      'verification'=>'23894sdf980sf9sdf9d2jaibaveracruzana2000',
+      'token' => 'EAAGrT16HtJgBAHymAa2BDFna33W2iZB3JUMYnDnebrnk5gdO4WHsTaReBxa935JEX6OfmGNZBH6fpURDJXVuuvPwYoVrDZCZBBcZCYfSBG7z5ph4DwSlRLVVCHEcOfGhk6j3ZAJaFH8UrSr87DJrFRHurRI4T7q1yzkgU8XrTHBwZDZD',
+      'app_secret' => 'e4647b87a6b18da6803bddc3b3349674', 
+      'verification'=>'d8wkg9wkflaaeha54qyhf5yadfjaibs3iwro203852',
   ]
 ];
 
 $doctrineCacheDriver = new FilesystemCache(__DIR__);
-$botman = BotManFactory::create(Constantes::CONFIG, new DoctrineCache($doctrineCacheDriver));
+$botman = BotManFactory::create($config, new DoctrineCache($doctrineCacheDriver));
 
 //INICIO DE LA CONVERSACIÓN
 
 $botman->hears('^(?!.*\basesor|ASESOR|Asesor\b).*$', function (BotMan $bot) {
-  $nombre = $bot->getUser()->getFirstName();
-  //$bot -> typesAndWaits(1);
-  $bot -> reply("Bienvenido $nombre. Somos una empresa que se dedica a dar créditos a los sectores de gobierno, IMSS y de la SEP");
-  //$bot -> typesAndWaits(1);
+  //$nombre = $bot->getUser()->getUsername();
+  $nombre = "";
+  $bot -> reply("Bienvenido$nombre. Somos una empresa que se dedica a dar créditos a los sectores de gobierno, IMSS y de la SEP");
   $bot -> startConversation(new MenuConversation($nombre));
 });
 
@@ -69,17 +67,6 @@ $botman->hears('.*(Menu|menu|Menú|MENU|menú).*', function(BotMan $bot) {
 $botman->hears('.*(asesor|ASESOR|Asesor).*', function(BotMan $bot) {
     $bot->reply(Constantes::MENSAJE_AYUDA_ASESOR);
 })->stopsConversation();
-
-//Mensaje de SALIR
-/*
-$botman->hears('Salir', function(BotMan $bot){
-  $nombre = $bot->getUser()->getFirstName();
-  $bot->reply(ButtonTemplate::create('Estimado '.$nombre.', si necesitas mas información de tu crédito sigo a tus ordenes, Gracias !')
-      ->addButton(ElementButton::create('¡No gracias!')->type('postback')->payload('¡No gracias!, salir'))
-      ->addButton(ElementButton::create('Si, volver al inicio')->type('postback')->payload('Si, volver al inicio'))
-  );
-});
-*/
 
 $botman->listen();
 //echo "This is botman running";
