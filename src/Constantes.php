@@ -7,14 +7,20 @@ class Constantes {
   public function __construct(){
     echo __CLASS__ . '<br />';
   }
+
+  //Configuración de la aplicación
   
-  const CONFIG = [
-    'facebook'=> [
-        'token' => 'EAAFamui1cCoBAGbrNG3AX6g1q36eIwGfZAEg9AH3FZAD8pSFwVMpKXOPeUdg5dbcuytXf2fyHD3UyjlGEepSyoLJKPY8iKTaSPAlpxTl1nY31gop0ZChIoyaZCIatBY44SysqrHJbx3FYVamqeKshMKX6iiHBngrGK56C2fi3QZDZD',
-        'app_secret' => 'c69036db967a97517be694473c59b8f2', 
-        'verification'=>'23894sdf980sf9sdf9d2jaibaveracruzana2000',
-    ]   
-  ];
+  const APP_SECRET = "e4647b87a6b18da6803bddc3b3349674";
+  const VERIFICATION = "d8wkg9wkflaaeha54qyhf5yadfjaibs3iwro203852";
+
+  public $page_token_array;
+
+  public static function generateTokenArray(){
+     return $page_token_array = [
+      "T_BOTENCIO" => "EAAGrT16HtJgBAE6YWNXXZCuwOQ6KjsdgIPLmcPpNy4aQBMB1zULuxCZCF6ZCPtJpwYPCCeNPAlafEFCEatuIJjnjRFpkd4YnoeZALkUEPS8FzUX9lTyxojsWxMew3WSV5tydeo28Yj0IyBidrzTF8AckeqpsDa2OGmQWPF4a8vpZBytq0SdGC",    
+      "T_CF" => "EAAGrT16HtJgBANcy1trAD3kht0pIoW18gHaaUY9DcXjsTGBfifvKxXEhtGox1yd6iWqRlpiAKrTxwmM9Ow1I71x7ZBI0OOFgsxuXD3rx1bxk55NlovIwJAoi5EWpNGYsMRDcKurUZCL2EWxen8fWZCCX9L6c7S2eHiFt0ZC8eZA4qVHym8yOT",    
+    ];
+  }
 
   //Mensajes para conversaciones
 

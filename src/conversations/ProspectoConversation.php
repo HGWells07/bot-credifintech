@@ -18,6 +18,7 @@ class ProspectoConversation extends Conversation{
   {
       $this->$prospecto = $user;
   }
+
 }
 
 ?>
