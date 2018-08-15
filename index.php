@@ -42,9 +42,14 @@ DriverManager::loadDriver(\Botman\Drivers\Facebook\FacebookFileDriver::class);
 
 $config = [
   'facebook'=> [
-      'token' => 'EAAGrT16HtJgBAHymAa2BDFna33W2iZB3JUMYnDnebrnk5gdO4WHsTaReBxa935JEX6OfmGNZBH6fpURDJXVuuvPwYoVrDZCZBBcZCYfSBG7z5ph4DwSlRLVVCHEcOfGhk6j3ZAJaFH8UrSr87DJrFRHurRI4T7q1yzkgU8XrTHBwZDZD',
-      'app_secret' => 'e4647b87a6b18da6803bddc3b3349674', 
-      'verification'=>'d8wkg9wkflaaeha54qyhf5yadfjaibs3iwro203852',
+    'token' => 'EAAGrT16HtJgBAHymAa2BDFna33W2iZB3JUMYnDnebrnk5gdO4WHsTaReBxa935JEX6OfmGNZBH6fpURDJXVuuvPwYoVrDZCZBBcZCYfSBG7z5ph4DwSlRLVVCHEcOfGhk6j3ZAJaFH8UrSr87DJrFRHurRI4T7q1yzkgU8XrTHBwZDZD',
+    'app_secret' => 'e4647b87a6b18da6803bddc3b3349674', 
+    'verification'=>'d8wkg9wkflaaeha54qyhf5yadfjaibs3iwro203852',
+  ],
+  'facebook'=> [
+    'token' => 'EAAGrT16HtJgBABfLPgpcl6b75v9NYAjZA3o1na8WetM3fH1u7yfgKzvJx7mZA7A3z6wZAghEXqJuwAvXo3ZCZCpjcR4ZAZBSKlpmXWVfuIFpwdVZCjNy605M3BN3zxCUyCauhqlZC8PjF5RQ1jHAel1bNR1Gu6k60AEZAA1wpXAkMpm2F42IX6QiFn',
+    'app_secret' => 'e4647b87a6b18da6803bddc3b3349674', 
+    'verification'=>'d8wkg9wkflaaeha54qyhf5yadfjaibs3iwro203852',
   ]
 ];
 
