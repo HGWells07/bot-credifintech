@@ -19,7 +19,7 @@ class ApiAi implements MiddlewareInterface
     /** @var HttpInterface */
     protected $http;
 
-    /** @var stdClass */
+    /** @var \stdClass */
     protected $response;
 
     /** @var string */
@@ -70,7 +70,7 @@ class ApiAi implements MiddlewareInterface
     /**
      * Perform the API.ai API call and cache it for the message.
      * @param  \BotMan\BotMan\Messages\Incoming\IncomingMessage $message
-     * @return stdClass
+     * @return \stdClass
      */
     protected function getResponse(IncomingMessage $message)
     {
@@ -115,10 +115,10 @@ class ApiAi implements MiddlewareInterface
     {
         $response = $this->getResponse($message);
 
-        $reply = isset($response->result->fulfillment->speech) ? $response->result->fulfillment->speech : '';
-        $action = isset($response->result->action) ? $response->result->action : '';
+        $reply = $response->result->fulfillment->speech ?? '';
+        $action = $response->result->action ?? '';
         $actionIncomplete = isset($response->result->actionIncomplete) ? (bool) $response->result->actionIncomplete : false;
-        $intent = isset($response->result->metadata->intentName) ? $response->result->metadata->intentName : '';
+        $intent = $response->result->metadata->intentName ?? '';
         $parameters = isset($response->result->parameters) ? (array) $response->result->parameters : [];
 
         $message->addExtras('apiReply', $reply);
