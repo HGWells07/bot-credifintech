@@ -38,6 +38,7 @@ class PensionadosConversation extends Conversation
       $this->pPensionado->email = $prospecto->email;
       $this->pPensionado->identificacion = $prospecto->identificacion;
       $this->pPensionado->monto = $prospecto->identificacion;
+      $this->pPensionado->id = $prospecto->id;
   }
 
   public function askInformacion(){
@@ -66,7 +67,23 @@ class PensionadosConversation extends Conversation
   {
     $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pp) {
       $pp->informeDePago = $images;
-        $this->askTerminar($pp); 
+      
+      foreach ($images as $image) {
+        $url = $image->getUrl(); // The direct url
+        
+        $note = array(
+          "subject"=>"Informe de Pago",
+          "description"=>$url,
+          "contact_ids"=>array($pp->id),
+        );
+        $note = json_encode($note);
+
+        $note_result = curl_wrap("notes", $note, "POST", "application/json");
+        
+
+      }
+
+      $this->askTerminar($pp); 
     });
   }
 

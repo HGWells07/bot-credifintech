@@ -133,6 +133,12 @@ class SolicitarDatosConversation extends Conversation{
       $contact_json = json_encode($contact_json);
       $output = curl_wrap("contacts", $contact_json, "POST", "application/json");
 
+      $fromCRM = curl_wrap("contacts/search/email/".$p->email, null, "GET", "application/json");
+      $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
+      $id = $fromCRMarr["id"];
+
+      $p->id = $id;
+
       foreach ($images as $image) {
         $url = $image->getUrl(); // The direct url
         
@@ -143,8 +149,7 @@ class SolicitarDatosConversation extends Conversation{
         );
         $note_INE = json_encode($note_INE);
 
-        $this->say("Array: " . $url);
-        //curl_wrap("notes", $note_INE, "POST", "application/json");
+        $note_result = curl_wrap("notes", $note_INE, "POST", "application/json");
         
 
       }  
