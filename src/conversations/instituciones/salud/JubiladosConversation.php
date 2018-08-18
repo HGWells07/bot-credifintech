@@ -37,12 +37,13 @@ class JubiladosConversation extends Conversation
       $this->pJubilado->email = $prospecto->email;
       $this->pJubilado->identificacion = $prospecto->identificacion;
       $this->pJubilado->monto = $prospecto->identificacion;
+      $this->pJubilado->id = $prospecto->id;
   }
 
 
   public function askInformacion(){
     $pj = $this->pJubilado;
-    $this -> askNombre($pj); 
+    $this -> askNSS($pj); 
   }
 
   public function stopsConversation(IncomingMessage $message)
@@ -58,6 +59,16 @@ class JubiladosConversation extends Conversation
   public function askNSS($pj){
     $this -> ask(Constantes::PEDIR_NSS, function(Answer $response) use ($pj){
       $pj->nss = $response->getText();
+
+      $note = array(
+        "subject"=>"NSS",
+        "description"=>$pj->nss,
+        "contact_ids"=>array($pj->id),
+      );
+      $note = json_encode($note);
+
+      $note_result = curl_wrap("notes", $note, "POST", "application/json");
+
       $this->askInformePago($pj);
     });
   }
@@ -66,7 +77,23 @@ class JubiladosConversation extends Conversation
   {
     $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pj) {
       $pj->informeDePago = $images;
-        $this->askTerminar($pj); 
+
+      foreach ($images as $image) {
+        $url = $image->getUrl(); // The direct url
+        
+        $note = array(
+          "subject"=>"Informe de Pago",
+          "description"=>$url,
+          "contact_ids"=>array($pj->id),
+        );
+        $note = json_encode($note);
+
+        $note_result = curl_wrap("notes", $note, "POST", "application/json");
+        
+
+      }
+
+      $this->askTerminar($pj); 
     });
   }
 

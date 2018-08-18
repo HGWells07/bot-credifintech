@@ -59,6 +59,16 @@ class PensionadosConversation extends Conversation
   public function askNSS($pp){
     $this -> ask(Constantes::PEDIR_NSS, function(Answer $response) use ($pp){
       $pp->nss = $response->getText();
+
+      $note = array(
+        "subject"=>"NSS",
+        "description"=>$pp->nss,
+        "contact_ids"=>array($pp->id),
+      );
+      $note = json_encode($note);
+
+      $note_result = curl_wrap("notes", $note, "POST", "application/json");
+
       $this->askInformePago($pp);
     });
   }

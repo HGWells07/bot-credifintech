@@ -37,6 +37,7 @@ class ConfianzaConversation extends Conversation
       $this->pConfianza->email = $prospecto->email;
       $this->pConfianza->identificacion = $prospecto->identificacion;
       $this->pConfianza->monto = $prospecto->identificacion;
+      $this->pConfianza->id = $prospecto->id;
   }
 
   public function askInformacion(){
@@ -56,7 +57,16 @@ class ConfianzaConversation extends Conversation
 
   public function askMatricula($pc){
     $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response) use ($pc){
-      $pc->matricula = $response->getText();
+      $pp->matricula = $response->getText();
+      $note = array(
+        "subject"=>"NSS",
+        "description"=>$pp->nss,
+        "contact_ids"=>array($pc->id),
+      );
+      $note = json_encode($note);
+
+      $note_result = curl_wrap("notes", $note, "POST", "application/json");
+
       $this-> askInformePago($pc);
     });
   }
@@ -65,6 +75,21 @@ class ConfianzaConversation extends Conversation
   {
     $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pc){
         $pc->informeDePago = $images;
+
+        foreach ($images as $image) {
+          $url = $image->getUrl(); // The direct url
+          
+          $note = array(
+            "subject"=>"Informe de Pago",
+            "description"=>$url,
+            "contact_ids"=>array($pc->id),
+          );
+          $note = json_encode($note);
+  
+          $note_result = curl_wrap("notes", $note, "POST", "application/json");
+          
+        }
+
         $this->askTerminar(); 
     });
   }

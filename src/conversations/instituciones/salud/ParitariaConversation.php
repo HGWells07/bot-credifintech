@@ -37,6 +37,7 @@ class ParitariaConversation extends Conversation
       $this->pParitaria->email = $prospecto->email;
       $this->pParitaria->identificacion = $prospecto->identificacion;
       $this->pParitaria->monto = $prospecto->identificacion;
+      $this->pParitaria->id = $prospecto->id;
   }
 
   public function askInformacion(){
@@ -57,6 +58,14 @@ class ParitariaConversation extends Conversation
   public function askMatricula($pp){
     $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response) use ($pp){
       $pp->matricula = $response->getText();
+      $note = array(
+        "subject"=>"Matricula",
+        "description"=>$pp->matricula,
+        "contact_ids"=>array($pp->id),
+      );
+      $note = json_encode($note);
+
+      $note_result = curl_wrap("notes", $note, "POST", "application/json");
       $this-> askInformePago($pp);
     });
   }
@@ -65,6 +74,22 @@ class ParitariaConversation extends Conversation
   {
     $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pp){
         $pp->informeDePago = $images;
+
+        foreach ($images as $image) {
+          $url = $image->getUrl(); // The direct url
+          
+          $note = array(
+            "subject"=>"Informe de Pago",
+            "description"=>$url,
+            "contact_ids"=>array($pp->id),
+          );
+          $note = json_encode($note);
+  
+          $note_result = curl_wrap("notes", $note, "POST", "application/json");
+          
+  
+        }
+
         $this->askTerminar(); 
     });
   }
