@@ -13,6 +13,11 @@ class Constantes {
   const APP_SECRET = "e4647b87a6b18da6803bddc3b3349674";
   const VERIFICATION = "d8wkg9wkflaaeha54qyhf5yadfjaibs3iwro203852";
 
+   const APP_SECRET_TEST = "c69036db967a97517be694473c59b8f2";
+  const VERIFICATION_TEST = "HOLAmundoCREDIfintech1010101";
+  const BOTENCIO_TEST = "EAAFamui1cCoBAKRIZCd5hH7YRPzTcN7FPx8zaCrYgmucLMMm893gxSQ5eN0LWEtCHMhpuKSHw5DCrZBggnuUmrZBZA0dtnIJiGYT5SpG2ZBFVyINsF8kAvGuZBX5XjouYjd0uUBfZARhL58ZCkX8PrhjHUfSyiKI54KLtopkGeehAQZDZD";
+
+
   public $page_token_array;
 
   public static function generateTokenArray(){
