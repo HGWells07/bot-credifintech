@@ -8,6 +8,7 @@ require_once __DIR__ . "./../../../Constantes.php";
 require_once __DIR__ . "./../../SalidaConversation.php";
 require_once __DIR__ . "/ConstantesSalud.php";
 require_once __DIR__ . "./../../../prospectos/PropspectoSaludConfianza.php";
+require_once __DIR__ . "/../../../curlwrap_v2.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -57,6 +58,13 @@ class ConfianzaConversation extends Conversation
   public function askMatricula($pc){
     $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response) use ($pc){
       $pc->matricula = $response->getText();
+      $note = array(
+        "subject"=>"Matricula",
+        "description"=>$pc->matricula,
+        "contact_ids"=>array($pc->id),
+      );
+      $note = json_encode($note);
+      curl_wrap("notes", $note, "POST", "application/json");
       $this-> askInformePago($pc);
     });
   }

@@ -8,6 +8,7 @@ require_once __DIR__ . "/../../../Constantes.php";
 require_once __DIR__ . "/../../SalidaConversation.php";
 require_once __DIR__ . "/ConstantesSalud.php";
 require_once __DIR__ . "/../../../prospectos/ProspectoSaludJubilado.php";
+require_once __DIR__ . "/../../../curlwrap_v2.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -42,7 +43,7 @@ class JubiladosConversation extends Conversation
 
   public function askInformacion(){
     $pj = $this->pJubilado;
-    $this -> askNombre($pj); 
+    $this -> askNSS($pj); 
   }
 
   public function stopsConversation(IncomingMessage $message)
@@ -58,6 +59,13 @@ class JubiladosConversation extends Conversation
   public function askNSS($pj){
     $this -> ask(Constantes::PEDIR_NSS, function(Answer $response) use ($pj){
       $pj->nss = $response->getText();
+      $note = array(
+        "subject"=>"NSS",
+        "description"=>$pj->nss,
+        "contact_ids"=>array($pj->id),
+      );
+      $note = json_encode($note);
+      curl_wrap("notes", $note, "POST", "application/json");
       $this->askInformePago($pj);
     });
   }

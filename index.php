@@ -55,9 +55,9 @@ $doctrineCacheDriver = new FilesystemCache(__DIR__);
 $botman = BotManFactory::create($config, new DoctrineCache($doctrineCacheDriver));
 
 $botman->hears('^(?!.*\basesor|ASESOR|Asesor\b).*$', function (BotMan $bot) {
-  $nombre = $bot->getUserWithFields(["first_name"]);
-  $nombre = $nombre->getFirstName();
-  $bot -> reply("Bienvenido $nombre. Somos una empresa que se dedica a dar créditos a los sectores de gobierno, IMSS y de la SEP");
+  //$nombre = $bot->getUserWithFields(["first_name"]);
+  //$nombre = $nombre->getFirstName();
+  $bot -> reply("Bienvenido. Somos una empresa que se dedica a dar créditos a los sectores de gobierno, IMSS y de la SEP");
   $bot -> startConversation(new MenuConversation($nombre));
 });
 
