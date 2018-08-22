@@ -45,7 +45,7 @@ $config = [
   
   'facebook'=> [
     //Botencio McBot
-    'token' => Constantes::T_BOTENCIO,
+    'token' => Constantes::T_CREDIFINTECH,
     'app_secret' => Constantes::APP_SECRET, 
     'verification'=> Constantes::VERIFICATION,
   ],
