@@ -83,12 +83,8 @@ class EducacionConversation extends Conversation {
         $selectedValue = $answer->getValue();
         $pe->plazoSeleccionado = "Plazos ".$selectedValue;
 
-        $fromCRM = curl_wrap("contacts/search/email/".$pe->email, null, "GET", "application/json");
-        $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
-        $id = $fromCRMarr["id"];
-        $pe->id = $id;
         $contact_update = array(
-          "id" => $id, //It is mandatory field. Id of contact
+          "id" =>$pe->id, //It is mandatory field. Id of contact
           "tags" => array($edu, $pe->plazoSeleccionado, $seccionSindical)
         );
         $contact_update = json_encode($contact_update);
