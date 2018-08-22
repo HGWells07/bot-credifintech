@@ -66,7 +66,22 @@ class JubiladosConversation extends Conversation
   {
     $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pj) {
       $pj->informeDePago = $images;
-        $this->askTerminar($pj); 
+
+      foreach ($images as $image) {
+        $url = $image->getUrl(); // The direct url
+        
+        $note = array(
+          "subject"=>"Informe de pago N.". $i,
+          "description"=>$url,
+          "contact_ids"=>array($pj->id),
+        );
+        $i++;
+        $note = json_encode($note);
+        curl_wrap("notes", $note, "POST", "application/json");
+
+      }
+
+        $this->askTerminar(); 
     });
   }
 

@@ -132,20 +132,24 @@ class SolicitarDatosConversation extends Conversation{
 
       $contact_json = json_encode($contact_json);
       $output = curl_wrap("contacts", $contact_json, "POST", "application/json");
-/*
+
+      $fromCRM = curl_wrap("contacts/search/email/".$p->email, null, "GET", "application/json");
+      $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
+      $p->id = $fromCRMarr["id"];
+
       foreach ($images as $image) {
-        $url = $image; // The direct url
+        $url = $image->getUrl(); // The direct url
         
         $note_INE = array(
           "subject"=>"Imagen de identificación",
           "description"=>$url,
-          "contact_ids"=>array($pe->id),
+          "contact_ids"=>array($p->id),
         );
         $note_INE = json_encode($note_INE);
         curl_wrap("notes", $note_INE, "POST", "application/json");
 
       }  
-*/
+
 
       if($sv=="Area/Salud"){
         $this->bot->startConversation(new SaludConversation($p));

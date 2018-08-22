@@ -66,11 +66,25 @@ class PensionadosConversation extends Conversation
   {
     $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pp) {
       $pp->informeDePago = $images;
-        $this->askTerminar($pp); 
+      foreach ($images as $image) {
+        $url = $image->getUrl(); // The direct url
+        
+        $note = array(
+          "subject"=>"Informe de pago N.". $i,
+          "description"=>$url,
+          "contact_ids"=>array($pp->id),
+        );
+        $i++;
+        $note = json_encode($note);
+        curl_wrap("notes", $note, "POST", "application/json");
+
+      }
+
+        $this->askTerminar(); 
     });
   }
 
-  public function askTerminar($pp){
+  public function askTerminar(){
     $this->ask(Constantes::MENSAJE_SOLICITUD_TERMINADA, function(Answer $response){
       return false;
     });

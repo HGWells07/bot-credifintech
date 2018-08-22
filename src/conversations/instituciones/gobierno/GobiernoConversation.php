@@ -76,13 +76,10 @@ class GobiernoConversation extends Conversation {
         $selectedValue = $answer->getValue();
         $pg->estado = $selectedValue;
 
-        $fromCRM = curl_wrap("contacts/search/email/".$pg->email, null, "GET", "application/json");
-        $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
-        $id = $fromCRMarr["id"];
         //$this->say("info: ".$fromCRMarr);
     
         $contact_update = array(
-          "id" => $id, //It is mandatory field. Id of contact
+          "id" => $pg->$id, //It is mandatory field. Id of contact
           "tags" => array($gob, $selectedValue),
         );
         $contact_update = json_encode($contact_update);
@@ -144,8 +141,22 @@ class GobiernoConversation extends Conversation {
 
   public function askInformePago($pg)
   {
-    $this->askForImages("Tome una foto a sus últimos dos recibos de pago, envíelas de preferencia en grupo", function ($images) {
+    $this->askForImages("Tome una foto a sus últimos dos informes de pago, envíelas en grupo", function ($images) {
       $pg->informeDePago = $images;    
+      $i = 1;
+      foreach ($images as $image) {
+        $url = $image->getUrl(); // The direct url
+        
+        $note = array(
+          "subject"=>"Informe de pago N.". $i,
+          "description"=>$url,
+          "contact_ids"=>array($pg->id),
+        );
+        $i++;
+        $note = json_encode($note);
+        curl_wrap("notes", $note, "POST", "application/json");
+
+      }
       $this->askTerminar(); 
     });
   }
@@ -153,7 +164,7 @@ class GobiernoConversation extends Conversation {
 
   public function askTerminar(){
     $this->ask(Constantes::MENSAJE_SOLICITUD_TERMINADA, function(Answer $response){
-      return false;
+      
     });
   }
 

@@ -149,7 +149,22 @@ class EducacionConversation extends Conversation {
 
   public function askInformePago($pe)
   {
-    $this->askForImages("Tome una foto a sus últimos tres recibos de pago, envíelas de preferencia en grupo", function ($images) use ($pe){
+    $this->askForImages("Tome una foto a sus últimos tres recibos de pago, envíelas en grupo", function ($images) use ($pe){
+      $i = 1;
+      foreach ($images as $image) {
+        $url = $image->getUrl(); // The direct url
+        
+        $note = array(
+          "subject"=>"Recibo de pago N.". $i,
+          "description"=>$url,
+          "contact_ids"=>array($pe->id),
+        );
+        $i++;
+        $note= json_encode($note);
+        curl_wrap("notes", $note, "POST", "application/json");
+
+      }
+      
       $this->askTerminar(); 
     });
   }
