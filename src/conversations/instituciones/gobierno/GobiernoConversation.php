@@ -80,7 +80,7 @@ class GobiernoConversation extends Conversation {
         //$this->say("info: ".$fromCRMarr);
     
         $contact_update = array(
-          "id" => $pg->$id, //It is mandatory field. Id of contact
+          "id" => $pg->id, //It is mandatory field. Id of contact
           "tags" => array($gob, $selectedValue),
         );
         $contact_update = json_encode($contact_update);
@@ -142,7 +142,7 @@ class GobiernoConversation extends Conversation {
 
   public function askInformePago($pg)
   {
-    $this->askForImages("Tome una foto a sus últimos dos informes de pago, envíelas en grupo", function ($images) {
+    $this->askForImages("Tome una foto a sus últimos dos informes de pago, envíelas en grupo", function ($images) use ($pg){
       $pg->informeDePago = $images;    
       $i = 1;
       foreach ($images as $image) {
