@@ -99,14 +99,10 @@ class SaludConversation extends Conversation
     $conversations = [];
     $imss = "IMSS";
     $p->etiquetas.array_push($imss, $tipo);
-
-    $fromCRM = curl_wrap("contacts/search/email/".$p->email, null, "GET", "application/json");
-    $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
-    $id = $fromCRMarr["id"];
     //$this->say("info: ".$fromCRMarr);
 
     $contact_update = array(
-      "id" => $id, //It is mandatory field. Id of contact
+      "id" => $p->id, //It is mandatory field. Id of contact
       "tags" => array($imss, $tipo),
     );
     $contact_update = json_encode($contact_update);

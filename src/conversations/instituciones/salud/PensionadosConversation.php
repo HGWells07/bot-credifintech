@@ -38,7 +38,9 @@ class PensionadosConversation extends Conversation
       $this->pPensionado->telefono = $prospecto->telefono;
       $this->pPensionado->email = $prospecto->email;
       $this->pPensionado->identificacion = $prospecto->identificacion;
-      $this->pPensionado->monto = $prospecto->identificacion;
+      $this->pPensionado->monto = $prospecto->monto;
+      $this->pPensionado->id = $prospecto->id;
+
   }
 
   public function askInformacion(){

@@ -38,7 +38,8 @@ class EducacionConversation extends Conversation {
       $this->pEducacion->telefono = $prospecto->telefono;
       $this->pEducacion->email = $prospecto->email;
       $this->pEducacion->identificacion = $prospecto->identificacion;
-      $this->pEducacion->monto = $prospecto->identificacion;
+      $this->pEducacion->monto = $prospecto->monto;
+      $this->pEducacion->id = $prospecto->id;
   }
 
   public function error(){

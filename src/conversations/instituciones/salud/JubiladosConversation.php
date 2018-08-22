@@ -37,7 +37,8 @@ class JubiladosConversation extends Conversation
       $this->pJubilado->telefono = $prospecto->telefono;
       $this->pJubilado->email = $prospecto->email;
       $this->pJubilado->identificacion = $prospecto->identificacion;
-      $this->pJubilado->monto = $prospecto->identificacion;
+      $this->pJubilado->monto = $prospecto->monto;
+      $this->pJubilado->id = $prospecto->id;
   }
 
 

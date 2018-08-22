@@ -37,7 +37,8 @@ class ConfianzaConversation extends Conversation
       $this->pConfianza->telefono = $prospecto->telefono;
       $this->pConfianza->email = $prospecto->email;
       $this->pConfianza->identificacion = $prospecto->identificacion;
-      $this->pConfianza->monto = $prospecto->identificacion;
+      $this->pConfianza->monto = $prospecto->monto;
+      $this->pConfianza->id = $prospecto->id;
   }
 
   public function askInformacion(){

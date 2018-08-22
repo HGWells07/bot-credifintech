@@ -37,7 +37,8 @@ class ParitariaConversation extends Conversation
       $this->pParitaria->telefono = $prospecto->telefono;
       $this->pParitaria->email = $prospecto->email;
       $this->pParitaria->identificacion = $prospecto->identificacion;
-      $this->pParitaria->monto = $prospecto->identificacion;
+      $this->pParitaria->monto = $prospecto->monto;
+      $this->pParitaria->id = $prospecto->id;
   }
 
   public function askInformacion(){

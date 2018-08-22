@@ -37,7 +37,8 @@ class GobiernoConversation extends Conversation {
       $this->pGobierno->telefono = $prospecto->telefono;
       $this->pGobierno->email = $prospecto->email;
       $this->pGobierno->identificacion = $prospecto->identificacion;
-      $this->pGobierno->monto = $prospecto->identificacion;
+      $this->pGobierno->monto = $prospecto->monto;
+      $this->pGobierno->id = $prospecto->id;
   }
 
   protected $errores = 0;
