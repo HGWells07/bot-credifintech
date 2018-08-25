@@ -46,7 +46,7 @@ $config = [
   'facebook'=> [
     //Botencio McBot
     'token' => Constantes::T_BOTENCIO,
-    'app_secret' => Constantes::APP_SECRET, 
+    'app_secret' => Constantes::APP_SECRET_TEST, 
     'verification'=> Constantes::VERIFICATION,
   ],
 ];
@@ -57,6 +57,7 @@ $botman = BotManFactory::create($config, new DoctrineCache($doctrineCacheDriver)
 $botman->hears('^(?!.*\basesor|ASESOR|Asesor\b).*$', function (BotMan $bot) {
   //$nombre = $bot->getUserWithFields(["first_name"]);
   //$nombre = $nombre->getFirstName();
+  $nombre = "";
   $bot -> reply("Bienvenido. Somos una empresa que se dedica a dar créditos a los sectores de gobierno, IMSS y de la SEP");
   $bot -> startConversation(new MenuConversation($nombre));
 });

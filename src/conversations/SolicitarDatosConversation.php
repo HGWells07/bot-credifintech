@@ -87,8 +87,16 @@ class SolicitarDatosConversation extends Conversation{
   public function askEmail($p, $sv){
     $this -> ask(Constantes::PEDIR_EMAIL, function(Answer $response) use ($p, $sv){
       $email = $response->getText();
-      $p->email = $email;
-      $this-> askMonto($p, $sv);
+      $regexEmail = '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/';
+      if(preg_match($regexEmail, $email)){
+        $p->email = $email;
+        $this-> askMonto($p, $sv);
+      } else {
+        $this->say("Necesitamos que nos proporcione una dirección de correo electrónico, de no contar con uno ingrese su numero telefonico y la terminacion '@gmail.com'");
+        $this->say("Por ejemplo 5510101010@gmail.com");
+        $this->say("En caso de necesitar asistencia de un asesor envie la palabra clave 'asesor'");
+        $this->askEmail($p, $sv);
+      }
     });
   }
 
@@ -145,6 +153,15 @@ class SolicitarDatosConversation extends Conversation{
           "description"=>$url,
           "contact_ids"=>array($p->id),
         );
+
+        $note = array(
+          "subject"=>"Monto",
+          "description"=>"$".$p->monto,
+          "contact_ids"=>array($p->id),
+        );
+        $note = json_encode($note);
+        curl_wrap("notes", $note, "POST", "application/json");
+
         $note_INE = json_encode($note_INE);
         curl_wrap("notes", $note_INE, "POST", "application/json");
 
