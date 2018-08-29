@@ -93,7 +93,7 @@ class SolicitarDatosConversation extends Conversation{
         $this-> askMonto($p, $sv);
       } else {
         $this->say("Necesitamos que nos proporcione una dirección de correo electrónico, de no contar con uno ingrese su numero telefonico y la terminacion '@gmail.com'");
-        $this->say("De no contar con un email, ingrese el mensaje '$email@gmail.com'");
+        $this->say("De no contar con un email, ingrese su telefono segido de @correo.com, así '$email@correo.com'");
         $this->say("En caso de necesitar asistencia de un asesor envie la palabra clave 'asesor'");
         $this->askEmail($p, $sv);
       }
