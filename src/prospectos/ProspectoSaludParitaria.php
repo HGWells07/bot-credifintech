@@ -7,5 +7,6 @@ use BotCredifintech\Prospectos\Prospecto;
 class ProspectoSaludParitaria extends Prospecto{
   public $matricula;
   public $informeDePago;
+  public $delegacion;
 }
 ?>

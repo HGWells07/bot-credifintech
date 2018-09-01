@@ -36,7 +36,7 @@ class Constantes {
   const PEDIR_NSS = "Escriba su NSS";
   const PEDIR_MATRICULA = "Escriba su número de matrícula";
   const PEDIR_INE = "Por favor tome una foto de su INE";
-  const PEDIR_TALON_NOMINA = "Por favor tome una foto de sutalón de nómina";
+  const PEDIR_TALON_NOMINA = "Por favor tome una foto de su talón de nómina";
   const PEDIR_INFORME_PAGO = "Por favor tome una foto de su Informe de pago";
   const PEDIR_EMAIL = "Por favor ingrese su correo electrónico";
   const PEDIR_MONTO = "¿Cuánto dinero necesita?";

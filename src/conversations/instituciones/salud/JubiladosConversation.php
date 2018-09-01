@@ -58,11 +58,11 @@ class JubiladosConversation extends Conversation
   }
   
   public function askNSS($pj){
-    $this -> ask(Constantes::PEDIR_NSS, function(Answer $response) use ($pj){
-      $pj->nss = $response->getText();
+    $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response) use ($pj){
+      $matricula = $response->getText();
       $note = array(
-        "subject"=>"NSS",
-        "description"=>$pj->nss,
+        "subject"=>"Matricula",
+        "description"=>$matricula,
         "contact_ids"=>array($pj->id),
       );
       $note = json_encode($note);
@@ -73,14 +73,14 @@ class JubiladosConversation extends Conversation
 
   public function askInformePago($pj)
   {
-    $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pj) {
+    $this->askForImages(Constantes::PEDIR_TALON_NOMINA, function ($images) use ($pj) {
       $pj->informeDePago = $images;
-
+      $i = 1;
       foreach ($images as $image) {
         $url = $image->getUrl(); // The direct url
         
         $note = array(
-          "subject"=>"Informe de pago N.". $i,
+          "subject"=>"Talon de nómina N.". $i,
           "description"=>$url,
           "contact_ids"=>array($pj->id),
         );

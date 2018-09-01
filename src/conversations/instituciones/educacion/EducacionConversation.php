@@ -70,7 +70,7 @@ class EducacionConversation extends Conversation {
     }
     array_push($buttonArray, Button::create("Otro")->value("Otro"));
 
-    $question = Question::create("¿A cuántos plazos realizará su prestamo?")
+    $question = Question::create("Podemos asesorarte para que escojas el plazo más conveniente, si prefieres algún plazo, indicalo aquí")
         ->fallback('Si no pertenece a alguna de las anteriores categorías no se podrá proceder con la solicitud, lo sentimos, estamos en contacto')
         ->callbackId('ask_lista_plazos')
         ->addButtons($buttonArray);

@@ -7,14 +7,14 @@ require __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . "/../Constantes.php";
 require_once __DIR__ . "/../prospectos/Prospecto.php";
 require_once __DIR__ . "/instituciones/salud/SaludConversation.php";
-require_once __DIR__ . "/instituciones/gobierno/GobiernoConversation.php";
+require_once __DIR__ . "/instituciones/pemex/PemexConversation.php";
 require_once __DIR__ . "/instituciones/educacion/EducacionConversation.php";
 require_once __DIR__."/SalidaConversation.php";
 require_once __DIR__ . "/../curlwrap_v2.php";
 
 use BotCredifintech\Conversations\Instituciones\Salud\SaludConversation;
 use BotCredifintech\Conversations\Instituciones\Educacion\EducacionConversation;
-use BotCredifintech\Conversations\Instituciones\Gobierno\GobiernoConversation;
+use BotCredifintech\Conversations\Instituciones\Pemex\PemexConversation;
 use BotCredifintech\Conversations\SalidaConversation;
 use BotCredifintech\Prospectos\Prospecto;
 
@@ -92,27 +92,12 @@ class SolicitarDatosConversation extends Conversation{
         $p->email = $email;
         $this-> askMonto($p, $sv);
       } else {
-        $this->say("Necesitamos que nos proporcione una dirección de correo electrónico, de no contar con uno ingrese su numero telefonico y la terminacion '@gmail.com'");
-        $this->say("De no contar con un email, ingrese su telefono segido de @correo.com, así '$email@correo.com'");
+        $this->say("De no contar con un email, ingrese su telefono segido de @correo.com, así:");
+        $this->say($p->telefono."@correo.com");
         $this->say("En caso de necesitar asistencia de un asesor envie la palabra clave 'asesor'");
+        $p ->email = $p->telefono."@correo.com";
         $this->askEmail($p, $sv);
       }
-    });
-  }
-
-  public function askMonto($p, $sv){   
-    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response) use ($p, $sv){
-      $monto = $response->getText();
-      $p->monto = $monto;
-      $this-> askINE($p, $sv);
-    });
-  }
-
-  public function askINE($p, $sv) {
-    $this->askForImages(Constantes::PEDIR_INE, function ($images) use ($p, $sv) {
-      $p->identificacion = $images;
-      // Primer guardado de información
-
       $contact_json =array(
         "properties"=>array(
           array(
@@ -140,6 +125,22 @@ class SolicitarDatosConversation extends Conversation{
 
       $contact_json = json_encode($contact_json);
       $output = curl_wrap("contacts", $contact_json, "POST", "application/json");
+      
+    });
+  }
+
+  public function askMonto($p, $sv){   
+    $this -> ask(Constantes::PEDIR_MONTO, function(Answer $response) use ($p, $sv){
+      $monto = $response->getText();
+      $p->monto = $monto;
+      $this-> askINE($p, $sv);
+    });
+  }
+
+  public function askINE($p, $sv) {
+    $this->askForImages(Constantes::PEDIR_INE, function ($images) use ($p, $sv) {
+      $p->identificacion = $images;
+      // Primer guardado de información
 
       $fromCRM = curl_wrap("contacts/search/email/".$p->email, null, "GET", "application/json");
       $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
@@ -154,19 +155,18 @@ class SolicitarDatosConversation extends Conversation{
           "contact_ids"=>array($p->id),
         );
 
-        $note = array(
-          "subject"=>"Monto",
-          "description"=>"$".$p->monto,
-          "contact_ids"=>array($p->id),
-        );
-        $note = json_encode($note);
-        curl_wrap("notes", $note, "POST", "application/json");
-
         $note_INE = json_encode($note_INE);
         curl_wrap("notes", $note_INE, "POST", "application/json");
 
       }  
 
+      $note = array(
+        "subject"=>"Monto",
+        "description"=>"$".$p->monto,
+        "contact_ids"=>array($p->id),
+      );
+      $note = json_encode($note);
+      curl_wrap("notes", $note, "POST", "application/json");
 
       if($sv=="Area/Salud"){
         $this->bot->startConversation(new SaludConversation($p));
@@ -174,8 +174,8 @@ class SolicitarDatosConversation extends Conversation{
       if($sv=="Area/Educación"){
         $this->bot->startConversation(new EducacionConversation($p));
       }
-      if($sv=="Area/Gobierno"){
-        $this->bot->startConversation(new GobiernoConversation($p));
+      if($sv=="Area/Pemex"){
+        $this->bot->startConversation(new PemexConversation($p));
       }
       if($sv=="Area/Ninguna"){
         $this->bot->startConversation(new SalidaConversation());

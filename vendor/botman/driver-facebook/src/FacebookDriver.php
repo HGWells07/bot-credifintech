@@ -83,6 +83,27 @@ class FacebookDriver extends HttpDriver implements VerifiesService
         $this->signature = $request->headers->get('X_HUB_SIGNATURE', '');
         $this->content = $request->getContent();
         $this->config = Collection::make($this->config->get('facebook', []));
+/*
+        $config = $this->config->get('botman.facebook', []);
+        $recipient_id = $this->event->get('messaging')[0]['recipient']['id'];
+
+        $token = null;
+        if(!($recipient_id == null OR $recipient_id == "")){
+            $key = 'page_token_'.$recipient_id;
+            $token = Cache::remember($key, 60, function () use ($recipient_id) {
+                $page_access_token = $recipient_id;//search_your_page_token_by_recipient_id_here
+                return $page_access_token;
+            });
+        }
+        if($token == null){
+            $this->config = Collection::make($this->config->get('facebook', []));
+        }else{
+            $config['token'] = $token;
+            $this->config = Collection::make($config);
+        }
+    */
+
+
     }
 
     /**

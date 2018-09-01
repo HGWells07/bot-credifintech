@@ -73,8 +73,8 @@ class MenuConversation extends Conversation
         ->callbackId('ask_area_gobierno')
         ->addButtons([
             Button::create('IMSS')->value('Area/Salud'),
-            Button::create('Educación')->value('Area/Educación'),
-            Button::create('Gobierno')->value('Area/Gobierno'),
+            Button::create('SEP')->value('Area/Educación'),
+            Button::create('PEMEX')->value('Area/Pemex'),
             Button::create('Otra o Privada')->value('Area/Ninguna'),
         ]);
 

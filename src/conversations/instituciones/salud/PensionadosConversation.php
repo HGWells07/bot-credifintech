@@ -60,10 +60,10 @@ class PensionadosConversation extends Conversation
 
   public function askNSS($pp){
     $this -> ask(Constantes::PEDIR_NSS, function(Answer $response) use ($pp){
-      $pp->nss = $response->getText();
+      $nss = $response->getText();
       $note = array(
         "subject"=>"NSS",
-        "description"=>$pp->nss,
+        "description"=>$nss,
         "contact_ids"=>array($pp->id),
       );
       $note = json_encode($note);
@@ -76,6 +76,7 @@ class PensionadosConversation extends Conversation
   {
     $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pp) {
       $pp->informeDePago = $images;
+      $i = 1;
       foreach ($images as $image) {
         $url = $image->getUrl(); // The direct url
         

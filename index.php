@@ -42,12 +42,12 @@ DriverManager::loadDriver(\Botman\Drivers\Facebook\FacebookImageDriver::class);
 DriverManager::loadDriver(\Botman\Drivers\Facebook\FacebookFileDriver::class);
 
 $config = [
-  
+  'conversation_cache_time' => 120,
   'facebook'=> [
     //Botencio McBot
-    'token' => Constantes::T_CREDIFINTECH,
-    'app_secret' => Constantes::APP_SECRET, 
-    'verification'=> Constantes::VERIFICATION,
+    'token' => Constantes::T_BOTENCIO,
+    'app_secret' => Constantes::APP_SECRET_TEST, 
+    'verification'=> Constantes::VERIFICATION_TEST,
   ],
 ];
 
@@ -58,7 +58,7 @@ $botman->hears('^(?!.*\basesor|ASESOR|Asesor\b).*$', function (BotMan $bot) {
   //$nombre = $bot->getUserWithFields(["first_name"]);
   //$nombre = $nombre->getFirstName();
   $bot -> reply("Bienvenido. Somos una empresa que se dedica a dar créditos a los sectores de gobierno, IMSS y de la SEP");
-  $bot -> startConversation(new MenuConversation($nombre));
+  $bot -> startConversation(new MenuConversation());
 });
 
 $botman->hears('.*(Menu|menu|Menú|MENU|menú).*', function(BotMan $bot) {

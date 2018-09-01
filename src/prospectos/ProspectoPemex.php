@@ -4,9 +4,7 @@ namespace BotCredifintech\Prospectos;
 require_once __DIR__."/Prospecto.php";
 use BotCredifintech\Prospectos\Prospecto;
 
-class ProspectoSaludJubilado extends Prospecto{
-  public $matricula;
+class ProspectoPemex extends Prospecto{
   public $informeDePago;
-  public $delegacion;
 }
 ?>

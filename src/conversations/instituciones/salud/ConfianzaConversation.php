@@ -58,10 +58,10 @@ class ConfianzaConversation extends Conversation
 
   public function askMatricula($pc){
     $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response) use ($pc){
-      $pc->matricula = $response->getText();
+      $matricula = $response->getText();
       $note = array(
         "subject"=>"Matricula",
-        "description"=>$pc->matricula,
+        "description"=>$matricula,
         "contact_ids"=>array($pc->id),
       );
       $note = json_encode($note);
@@ -72,7 +72,7 @@ class ConfianzaConversation extends Conversation
 
   public function askInformePago($pc)
   {
-    $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pc){
+    $this->askForImages(Constantes::PEDIR_TALON_NOMINA, function ($images) use ($pc){
         $pc->informeDePago = $images;
 
         $i = 1;
@@ -80,7 +80,7 @@ class ConfianzaConversation extends Conversation
         $url = $image->getUrl(); // The direct url
         
         $note = array(
-          "subject"=>"Informe de pago N.". $i,
+          "subject"=>"Talón de nómina N.". $i,
           "description"=>$url,
           "contact_ids"=>array($pc->id),
         );

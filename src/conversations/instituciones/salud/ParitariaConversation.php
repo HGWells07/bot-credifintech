@@ -58,10 +58,10 @@ class ParitariaConversation extends Conversation
 
   public function askMatricula($pp){
     $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response) use ($pp){
-      $pp->matricula = $response->getText();
+      $matricula = $response->getText();
       $note = array(
         "subject"=>"Matricula",
-        "description"=>$pp->matricula,
+        "description"=>$matricula,
         "contact_ids"=>array($pp->id),
       );
       $note = json_encode($note);
@@ -72,13 +72,14 @@ class ParitariaConversation extends Conversation
 
   public function askInformePago($pp)
   {
-    $this->askForImages(Constantes::PEDIR_INFORME_PAGO, function ($images) use ($pp){
+    $this->askForImages(Constantes::PEDIR_TALON_NOMINA, function ($images) use ($pp){
         $pp->informeDePago = $images;
+        $i = 1;
         foreach ($images as $image) {
           $url = $image->getUrl(); // The direct url
           
           $note = array(
-            "subject"=>"Informe de pago N.". $i,
+            "subject"=>"Talón de nómina". $i,
             "description"=>$url,
             "contact_ids"=>array($pp->id),
           );

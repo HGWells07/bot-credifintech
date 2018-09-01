@@ -14,6 +14,8 @@ class Prospecto {
   protected $etiquetas = array();
   protected $notas;
   protected $id;
+  protected $recipientUserId;
+  protected $delegacion;
 
   static function constructWithInfo($nombre, $apellido, $telefono, $email, $monto, $identificacion){
     $object = new Prospecto();

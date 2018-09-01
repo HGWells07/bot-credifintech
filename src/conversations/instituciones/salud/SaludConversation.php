@@ -38,7 +38,7 @@ class SaludConversation extends Conversation
       $this->prospecto = $prospecto;
   }
 
-  const PENSIONADOS = "Pensionados";
+  const PENSIONADOS = "Pensionados Ley";
   const CONFIANZA = "Confianza";
   const JUBILADOS = "Jubilados";
   const PARITARIA = "Paritaria";
@@ -47,6 +47,17 @@ class SaludConversation extends Conversation
 
 
   protected $errores = 0;
+
+  public function askDelegacion($prospecto){
+    if(!isset($prospecto)){
+      $prospecto = $this->prospecto;
+    }
+    $question = "Escriba su número de delagación";
+    $this->ask($question, function (Answer $answer) use ($prospecto){
+      $prospecto->delegacion = $answer->getText();
+      $this->askCategoria($prospecto);
+    });
+  }
 
   public function askCategoria($prospecto){
     if(!isset($prospecto)){
@@ -98,7 +109,8 @@ class SaludConversation extends Conversation
 
     $conversations = [];
     $imss = "IMSS";
-    $p->etiquetas.array_push($imss, $tipo);
+    $delegacion = "Delegacion ".$p->delegacion;
+    $p->etiquetas.array_push($imss, $tipo, $delegacion);
     //$this->say("info: ".$fromCRMarr);
 
     $contact_update = array(
@@ -158,7 +170,8 @@ class SaludConversation extends Conversation
 	}
 
   public function run(){
-    $this->askCategoria($this->$prospecto);
+    $prospecto = $this->$prospecto;
+    $this->askDelegacion($prospecto);
   }
 }
 
