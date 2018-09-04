@@ -68,7 +68,7 @@ class MenuConversation extends Conversation
 
   public function askInstituciones()
   {
-    $question = Question::create("¿A cuál sector del gobierno pertenece/trabaja?")
+    $question = Question::create("Me gustaría recibir asesoría en…")
         ->fallback('Si no pertenece a alguna de las anteriores áreas no se podrá proceder con la solicitud, lo sentimos, estamos en contacto')
         ->callbackId('ask_area_gobierno')
         ->addButtons([

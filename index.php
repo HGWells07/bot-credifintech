@@ -57,7 +57,7 @@ $botman = BotManFactory::create($config, new DoctrineCache($doctrineCacheDriver)
 $botman->hears('^(?!.*\basesor|ASESOR|Asesor\b).*$', function (BotMan $bot) {
   //$nombre = $bot->getUserWithFields(["first_name"]);
   //$nombre = $nombre->getFirstName();
-  $bot -> reply("Bienvenido. Somos una empresa que se dedica a dar créditos a los sectores de gobierno, IMSS y de la SEP");
+  $bot -> reply("¡Bienvenido! Somos consultores autorizados con tecnología de punta que nos permite apoyarte en cualquier hora y día de la semana. Expertos en Jubilados, pensionados IMSS, empleados SEP y otros.");
   $bot -> startConversation(new MenuConversation());
 });
 
