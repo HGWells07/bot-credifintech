@@ -10,7 +10,7 @@ require_once __DIR__ . "/PensionadosConversation.php";
 require_once __DIR__ . "/ConfianzaConversation.php";
 require_once __DIR__ . "/JubiladosConversation.php";
 require_once __DIR__ . "/ParitariaConversation.php";
-require_once __DIR__ . "/../../../curlwrap_v2.php";
+//require_once __DIR__ . "/../../../curlwrap_v2.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -112,13 +112,6 @@ class SaludConversation extends Conversation
     $delegacion = "Delegacion ".$p->delegacion;
     $p->etiquetas.array_push($imss, $tipo, $delegacion);
     //$this->say("info: ".$fromCRMarr);
-
-    $contact_update = array(
-      "id" => $p->id, //It is mandatory field. Id of contact
-      "tags" => array($imss, $tipo),
-    );
-    $contact_update = json_encode($contact_update);
-    curl_wrap("contacts/edit/tags", $contact_update, "PUT", "application/json");
 
     $question = Question::create(Constantes::PREGUNTA_DOCUMENTACION)
         ->fallback('En orden de realizar esta solicitud son necesarios estos documentos y datos, sin ellos no podrá continuar')

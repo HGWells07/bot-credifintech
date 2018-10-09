@@ -10,7 +10,8 @@ require_once __DIR__ . "/instituciones/salud/SaludConversation.php";
 require_once __DIR__ . "/instituciones/pemex/PemexConversation.php";
 require_once __DIR__ . "/instituciones/educacion/EducacionConversation.php";
 require_once __DIR__."/SalidaConversation.php";
-require_once __DIR__ . "/../curlwrap_v2.php";
+//require_once __DIR__ . "/../curlwrap_v2.php";
+require_once __DIR__ . "/../generico/obtenerListaImagenes.php";
 
 use BotCredifintech\Conversations\Instituciones\Salud\SaludConversation;
 use BotCredifintech\Conversations\Instituciones\Educacion\EducacionConversation;
@@ -98,33 +99,6 @@ class SolicitarDatosConversation extends Conversation{
         $p ->email = $p->telefono."@correo.com";
         $this->askEmail($p, $sv);
       }
-      $contact_json =array(
-        "properties"=>array(
-          array(
-            "name"=>"first_name",
-            "value"=>$p->nombre,
-            "type"=>"SYSTEM"
-          ),
-          array(
-            "name"=>"last_name",
-            "value"=>$p->apellido,
-            "type"=>"SYSTEM"
-          ),
-          array(
-            "name"=>"email",
-            "value"=>$p->email,
-            "type"=>"SYSTEM"
-          ),  
-          array(
-              "name"=>"phone",
-              "value"=>$p->telefono,
-              "type"=>"SYSTEM"
-          ),
-        ),
-      );
-
-      $contact_json = json_encode($contact_json);
-      $output = curl_wrap("contacts", $contact_json, "POST", "application/json");
       
     });
   }
@@ -139,34 +113,7 @@ class SolicitarDatosConversation extends Conversation{
 
   public function askINE($p, $sv) {
     $this->askForImages(Constantes::PEDIR_INE, function ($images) use ($p, $sv) {
-      $p->identificacion = $images;
-      // Primer guardado de información
-
-      $fromCRM = curl_wrap("contacts/search/email/".$p->email, null, "GET", "application/json");
-      $fromCRMarr = json_decode($fromCRM, true, 512, JSON_BIGINT_AS_STRING);
-      $p->id = $fromCRMarr["id"];
-
-      foreach ($images as $image) {
-        $url = $image->getUrl(); // The direct url
-        
-        $note_INE = array(
-          "subject"=>"Imagen de identificación",
-          "description"=>$url,
-          "contact_ids"=>array($p->id),
-        );
-
-        $note_INE = json_encode($note_INE);
-        curl_wrap("notes", $note_INE, "POST", "application/json");
-
-      }  
-
-      $note = array(
-        "subject"=>"Monto",
-        "description"=>"$".$p->monto,
-        "contact_ids"=>array($p->id),
-      );
-      $note = json_encode($note);
-      curl_wrap("notes", $note, "POST", "application/json");
+      $p->identificacion = obtenerListaImagenes($images);
 
       if($sv=="Area/Salud"){
         $this->bot->startConversation(new SaludConversation($p));

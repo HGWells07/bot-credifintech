@@ -8,7 +8,9 @@ require_once __DIR__ . "/../../../Constantes.php";
 require_once __DIR__ . "/../../SalidaConversation.php";
 require_once __DIR__."/ConstantesPemex.php";
 require_once __DIR__ . "/../../../prospectos/ProspectoPemex.php";
-require_once __DIR__ . "/../../../curlwrap_v2.php";
+//require_once __DIR__ . "/../../../curlwrap_v2.php";
+require_once __DIR__ . "/../../../crm/createLead.php";
+require_once __DIR__ . "/../../../generico/obtenerListaImagenes.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -37,7 +39,7 @@ class PemexConversation extends Conversation {
       $this->pPemex->email = $prospecto->email;
       $this->pPemex->identificacion = $prospecto->identificacion;
       $this->pPemex->monto = $prospecto->monto;
-      $this->pPemex->id = $prospecto->id;
+      //$this->pPemex->id = $prospecto->id;
   }
 
   protected $errores = 0;
@@ -117,24 +119,27 @@ class PemexConversation extends Conversation {
 		return false;
   }
 
-  public function askInformePago($pp)
+  public function askInformePago($p)
   {
-    $this->askForImages("Tome una foto a sus últimos tres informes de pago, envíelas en grupo", function ($images) use ($pp){
-      $pp->informeDePago = $images;    
-      $i = 1;
-      foreach ($images as $image) {
-        $url = $image->getUrl(); // The direct url
-        
-        $note = array(
-          "subject"=>"Informe de pago N.". $i,
-          "description"=>$url,
-          "contact_ids"=>array($pp->id),
-        );
-        $i++;
-        $note = json_encode($note);
-        curl_wrap("notes", $note, "POST", "application/json");
+    $this->askForImages("Tome una foto a sus últimos tres informes de pago, envíelas en grupo", function ($images) use ($p){
+      $p->informeDePago = obtenerListaImagenes($images);    
 
-      }
+      $params = array(
+        'firstName' => $p->nombre, 
+        'lastName' => $p->apellido, 
+        'emailAddress' => $p->email,
+        'mobilePhoneNumber' => $p->telefono,
+        'companyName' => 'Pemex JUBILADOS',
+        'description'=>"
+          Monto: $p->monto, \n
+          INE: $p->identificacion, \n
+          Informes de pago: $p->informeDePago \n
+        "
+      );  
+
+      $result = createLead($params);
+      $this->say($result);
+
       $this->askTerminar(); 
     });
   }

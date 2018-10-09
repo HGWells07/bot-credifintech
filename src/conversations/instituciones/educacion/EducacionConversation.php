@@ -8,7 +8,9 @@ require_once __DIR__ . "/../../../Constantes.php";
 require_once __DIR__ . "/ConstantesEducacion.php";
 require_once __DIR__ . "/../../SalidaConversation.php";
 require_once __DIR__ . "/../../../prospectos/ProspectoEducacion.php";
-require_once __DIR__ . "/../../../curlwrap_v2.php";
+//require_once __DIR__ . "/../../../curlwrap_v2.php";
+require_once __DIR__ . "/../../../crm/createLead.php";
+require_once __DIR__ . "/../../../generico/obtenerListaImagenes.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -39,7 +41,7 @@ class EducacionConversation extends Conversation {
       $this->pEducacion->email = $prospecto->email;
       $this->pEducacion->identificacion = $prospecto->identificacion;
       $this->pEducacion->monto = $prospecto->monto;
-      $this->pEducacion->id = $prospecto->id;
+      //$this->pEducacion->id = $prospecto->id;
   }
 
   public function error(){
@@ -83,15 +85,8 @@ class EducacionConversation extends Conversation {
         $selectedValue = $answer->getValue();
         $pe->plazoSeleccionado = "Plazos ".$selectedValue;
 
-        $contact_update = array(
-          "id" =>$pe->id, //It is mandatory field. Id of contact
-          "tags" => array($edu, $pe->plazoSeleccionado, $seccionSindical)
-        );
-        $contact_update = json_encode($contact_update);
-        $output = curl_wrap("contacts/edit/tags", $contact_update, "PUT", "application/json");
-
         if(in_array($selectedValue, $plazos)){
-          $this->askInformePago($pe);
+          $this->askReciboDePago($pe);
         } else {
           $this->bot->startConversation(new SalidaConversation());
         }
@@ -144,23 +139,29 @@ class EducacionConversation extends Conversation {
   
   //Funciones para juntar datos
 
-  public function askInformePago($pe)
+  public function askReciboDePago($p)
   {
-    $this->askForImages("Tome una foto a sus últimos tres recibos de pago, envíelas en grupo", function ($images) use ($pe){
-      $i = 1;
-      foreach ($images as $image) {
-        $url = $image->getUrl(); // The direct url
-        
-        $note = array(
-          "subject"=>"Recibo de pago N.". $i,
-          "description"=>$url,
-          "contact_ids"=>array($pe->id),
-        );
-        $i++;
-        $note= json_encode($note);
-        curl_wrap("notes", $note, "POST", "application/json");
+    $this->askForImages("Tome una foto a sus últimos tres recibos de pago, envíelas en grupo", function ($images) use ($p){
+      $recibos = obtenerListaImagenes($images);
 
-      }
+      $params = array(
+        'firstName' => $p->nombre, 
+        'lastName' => $p->apellido, 
+        'emailAddress' => $p->email,
+        'mobilePhoneNumber' => $p->telefono,
+        'companyName' => 'SEP',
+        'description'=>"
+          Monto: $p->monto, \n
+          INE: $p->identificacion, \n
+
+          Seccion Sindical: $p->seccionSindical, \n
+          Plazo seleccionado: $p->plazoSeleccionado, \n
+          Recibos de pago: $recibos \n
+        "
+      );  
+
+      $result = createLead($params);
+      $this->say($result);
       
       $this->askTerminar(); 
     });

@@ -8,7 +8,9 @@ require_once __DIR__ . "./../../../Constantes.php";
 require_once __DIR__ . "./../../SalidaConversation.php";
 require_once __DIR__ . "/ConstantesSalud.php";
 require_once __DIR__ . "./../../../prospectos/PropspectoSaludConfianza.php";
-require_once __DIR__ . "/../../../curlwrap_v2.php";
+//require_once __DIR__ . "/../../../curlwrap_v2.php";
+require_once __DIR__ . "/../../../crm/createLead.php";
+require_once __DIR__ . "/../../../generico/obtenerListaImagenes.php";
 
 use BotMan\Drivers\Facebook\Extensions\Message;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -38,7 +40,7 @@ class ConfianzaConversation extends Conversation
       $this->pConfianza->email = $prospecto->email;
       $this->pConfianza->identificacion = $prospecto->identificacion;
       $this->pConfianza->monto = $prospecto->monto;
-      $this->pConfianza->id = $prospecto->id;
+      //$this->pConfianza->id = $prospecto->id;
   }
 
   public function askInformacion(){
@@ -58,37 +60,34 @@ class ConfianzaConversation extends Conversation
 
   public function askMatricula($pc){
     $this -> ask(Constantes::PEDIR_MATRICULA, function(Answer $response) use ($pc){
-      $matricula = $response->getText();
-      $note = array(
-        "subject"=>"Matricula",
-        "description"=>$matricula,
-        "contact_ids"=>array($pc->id),
-      );
-      $note = json_encode($note);
-      curl_wrap("notes", $note, "POST", "application/json");
+      $pc->matricula = $response->getText();
       $this-> askInformePago($pc);
     });
   }
 
-  public function askInformePago($pc)
+  public function askInformePago($p)
   {
-    $this->askForImages(Constantes::PEDIR_TALON_NOMINA, function ($images) use ($pc){
-        $pc->informeDePago = $images;
+    $this->askForImages(Constantes::PEDIR_TALON_NOMINA, function ($images) use ($p){
+        $p->informeDePago = obtenerListaImagenes($images);
 
-        $i = 1;
-      foreach ($images as $image) {
-        $url = $image->getUrl(); // The direct url
-        
-        $note = array(
-          "subject"=>"Talón de nómina N.". $i,
-          "description"=>$url,
-          "contact_ids"=>array($pc->id),
-        );
-        $i++;
-        $note = json_encode($note);
-        curl_wrap("notes", $note, "POST", "application/json");
-
-      }
+        $params = array(
+          'firstName' => $p->nombre, 
+          'lastName' => $p->apellido, 
+          'emailAddress' => $p->email,
+          'mobilePhoneNumber' => $p->telefono,
+          'companyName' => 'IMSS CONFIANZA',
+          'description'=>"
+            Monto: $p->monto, \n
+            INE: $p->identificacion, \n
+  
+            Matricula: $p->matricula, \n
+            Talon de nomina: $p->informeDePago, \n
+            Delegacion: $p->delegacion, \n
+          "
+        );  
+  
+        $result = createLead($params);
+        $this->say($result);
 
         $this->askTerminar(); 
     });
