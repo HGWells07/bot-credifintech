@@ -64,7 +64,7 @@ class Constantes {
   const PREGUNTA_DOCUMENTACION = "¿Cuenta con los datos/documentos que se requieren?";
   
   //Estos dos mensajes conforman el enlistado y confirmación de que se cuenta con los datos requeridos
-  const MENSAJE_DATOS_REQUERIDOS = "Para realizar esta solicitud de crédito se requerirán los siguientes datos/documentos, presione el boton de todo listo cuando esté seguro de tener toda la información a la mano";
+  const MENSAJE_DATOS_REQUERIDOS = "Para recibir esta asesoría de crédito se requerirán los siguientes datos/documentos, presione el boton de todo listo cuando esté seguro de tener toda la información a la mano";
 
   //Mensaje de finalizacion del registro
   const MENSAJE_SOLICITUD_TERMINADA = "¡Todo listo! en un momento un asesor especializado se contactará con usted";
