@@ -44,10 +44,9 @@ DriverManager::loadDriver(\Botman\Drivers\Facebook\FacebookFileDriver::class);
 $config = [
   'conversation_cache_time' => 120,
   'facebook'=> [
-    //Botencio McBot
-    'token' => Constantes::T_BOTENCIO,
-    'app_secret' => Constantes::APP_SECRET_TEST, 
-    'verification'=> Constantes::VERIFICATION_TEST,
+    'token' => Constantes::T_CREDIFINTECH,
+    'app_secret' => Constantes::APP_SECRET, 
+    'verification'=> Constantes::VERIFICATION,
   ],
 ];
 
